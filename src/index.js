@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import { REGISTRAR_ABI } from "./abi.js";
+import registrarABI from "../abis/ETNBaseRegistrarABI.json" assert { type: "json" };
 import { processRegistration } from "./processRegistration.js";
 import { getLastProcessedBlock, setLastProcessedBlock } from "../backend/state/state.js";
 
@@ -33,8 +33,8 @@ if (!RPC_URL || !REGISTRAR_ADDRESS || !BACKEND_PRIVATE_KEY) {
 const provider = new ethers.JsonRpcProvider(RPC_URL);
 const signer   = new ethers.Wallet(BACKEND_PRIVATE_KEY, provider);
 
-const registrarRead  = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, provider);
-const registrarWrite = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, signer);
+const registrarRead  = new ethers.Contract(REGISTRAR_ADDRESS, registrarABI, provider);
+const registrarWrite = new ethers.Contract(REGISTRAR_ADDRESS, registrarABI, signer);
 
 let isPolling = false; // simple lock to prevent overlapping poll cycles
 

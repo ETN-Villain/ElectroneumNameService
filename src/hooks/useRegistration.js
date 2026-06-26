@@ -1,16 +1,10 @@
 import { useState, useCallback } from "react";
 import { ethers } from "ethers";
 import { REGISTRAR_ADDRESS, RPC_URL } from "../config_VERCEL.js";
+import registrarABI from "../abis/ETNBaseRegistrarABI.json" assert { type: "json" };
 
 // Minimal ABI for registration
-const REGISTRAR_ABI = [
-  "function getBasicYearPrice() view returns (uint256)",
-  "function getBasicLifetimePrice() view returns (uint256)",
-  "function getProjectNameYearPrice() view returns (uint256)",
-  "function getProjectNameLifetimePrice() view returns (uint256)",
-  "function registerBasic(string calldata name, address resolver, bool lifetime) external payable",
-  "function registerProject(string calldata name, string calldata project, address resolver, bool lifetime) external payable",
-];
+const registrar = new ethers.Contract(REGISTRAR_ADDRESS, registrarABI, provider);
 
 export function useRegistration() {
   const [loading, setLoading] = useState(false);
