@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { ethers } from "ethers";
-import { REGISTRAR_ADDRESS, RPC_URL } from "../config_VERCEL.js";
+import { REGISTRAR_ADDRESS, RPC_URL } from "../config.js";
 
 // Placeholder ABI — will be replaced once user uploads real ABI
 const REGISTRAR_ABI = [
