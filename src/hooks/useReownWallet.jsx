@@ -10,6 +10,7 @@ import {
 } from "@reown/appkit/react";
 
 import { defineChain } from "@reown/appkit/networks";
+import { EthersAdapter } from "@reown/appkit-adapter-ethers";
 
 import {
   RPC_URL,
