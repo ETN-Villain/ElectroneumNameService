@@ -1,0 +1,13 @@
+export const CHAIN_ID = 52014; // Electroneum mainnet (example)
+export const RPC_URL = "https://rpc.ankr.com/electroneum";
+export const IPFS_BASE = "https://ipfs.io/ipfs/QmZMPmh6qg31NqH5tFKoQ5k3uMDBNMxkQUS7tyqCZstUNv/";
+export const CORE_TOKEN = "0x309B916b3A90cb3E071697Ea9680e9217A30066f";
+export const ADMIN_ADDRESS = "0x3Fd2e5B4AC0efF6DFDF2446abddAB3f66B425099"
+export const EXPLORER_BASE_URL = "https://blockexplorer.electroneum.com";
+export const BACKEND_PRIVATE_KEY = process.env.BACKEND_PRIVATE_KEY;
+export const WETN_TOKEN_ADDRESS = process.env.WETN_TOKEN_ADDRESS;
+export const ELECTROSWAP_BASE_URL = "https://app.electroswap.io";
+export const REGISTRAR_ADDRESS = "0x553B1D45CeE1111CE2940c76C23bFC1B70Ed37e3"; // Update with your registrar
+export const RESOLVER_ADDRESS = "0x89CBcc827c71B21DFE3d65f544b72C992FC45AA4"; // Update with your resolver
+export const REOWN_PROJECT_ID = "146ee334d324044083b6427d4bbf9202"; // Add your Reown project ID
+export const BACKEND_IMAGE_URL = "https://your-render-service.onrender.com"; // Backend image service URL
