@@ -37,10 +37,11 @@ export function useNamespace() {
 
       const price = await getPrice(lifetime);
 
-      const tx = await registrar.buyProject(projectName, lifetime, {
-        value: price,
-      });
-
+const tx = await registrar.buyProject(projectName, lifetime, {
+     value: price,
+     gasLimit: 500000  // Increase this
+   });
+   
       const receipt = await tx.wait();
 
       if (!receipt) throw new Error("Namespace creation failed");
