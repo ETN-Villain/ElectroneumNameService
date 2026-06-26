@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { green, greenGlow, muted, mutedLight, error, panel2, border } from "./theme.js";
-import { useCheckAvailability } from "./useCheckAvailability.js";
-import NeonButton from "./NeonButton.jsx";
+import { green, greenGlow, muted, mutedLight, error, panel2, border } from "../styles/theme.js";
+import { useCheckAvailability } from "../hooks/useCheckAvailability.js";
+import NeonButton from "../components/NeonButton.jsx";
 
 export default function SearchBar({ wallet, onNameSelected = null }) {
   const [nameInput, setNameInput] = useState("");

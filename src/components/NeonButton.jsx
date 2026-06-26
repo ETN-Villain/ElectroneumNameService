@@ -1,5 +1,5 @@
 import React from "react";
-import { green, greenGlow } from "./theme.js";
+import { green, greenGlow } from "../styles/theme.js";
 
 export default function NeonButton({ 
   children, 

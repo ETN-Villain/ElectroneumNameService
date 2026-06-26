@@ -8,16 +8,13 @@ import {
   useAppKitProvider,
   useDisconnect,
 } from "@reown/appkit/react";
-import { EthersAdapter } from "@reown/appkit-adapter-ethers";
-import { defineChain } from "@reown/appkit/networks";
 
 import {
   RPC_URL,
   CHAIN_ID,
   EXPLORER_BASE_URL,
-} from "../config.js";
-
-const PROJECT_ID = "146ee334d324044083b6427d4bbf9202";
+  REOWN_PROJECT_ID,
+} from "../config_VERCEL.js";
 
 export const electroneum = defineChain({
   id: CHAIN_ID,
@@ -53,7 +50,7 @@ export const appKitModal = createAppKit({
   adapters: [new EthersAdapter()],
   networks: [electroneum],
   defaultNetwork: electroneum,
-  projectId: PROJECT_ID,
+  projectId: REOWN_PROJECT_ID,
   metadata,
   enableInjected: false,
   allowUnsupportedChain: false,

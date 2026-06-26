@@ -1,5 +1,5 @@
 import React from "react";
-import { panel, border, greenGlow } from "./theme.js";
+import { panel, border, greenGlow } from "../styles/theme.js";
 
 export default function Panel({ children, style = {} }) {
   return (

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { green, greenGlow, muted, mutedLight, error, panel2, border, orange } from "./theme.js";
-import { useRegistration } from "./useRegistration.js";
-import NeonButton from "./NeonButton.jsx";
+import { green, greenGlow, muted, mutedLight, error, panel2, border, orange } from "../styles/theme.js";
+import { useRegistration } from "../hooks/useRegistration.js";
+import NeonButton from "../components/NeonButton.jsx";
 
 export default function RegistrationFlow({ 
   nameData, 
