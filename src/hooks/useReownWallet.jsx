@@ -14,7 +14,7 @@ import {
   CHAIN_ID,
   EXPLORER_BASE_URL,
   REOWN_PROJECT_ID,
-} from "../config_VERCEL.js";
+} from "../config.js";
 
 export const electroneum = defineChain({
   id: CHAIN_ID,
