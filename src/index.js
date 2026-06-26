@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import registrarABI from "../abis/ETNBaseRegistrarABI.json" assert { type: "json" };
+import registrarABI from "./abis/ETNBaseRegistrarABI.json" assert { type: "json" };
 import { processRegistration } from "./processRegistration.js";
 import { getLastProcessedBlock, setLastProcessedBlock } from "../backend/state/state.js";
 
