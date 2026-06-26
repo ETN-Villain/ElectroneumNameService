@@ -4,7 +4,7 @@ export const RPC_URL = import.meta.env.VITE_RPC_URL || "https://rpc.ankr.com/ele
 export const EXPLORER_BASE_URL = import.meta.env.VITE_EXPLORER_BASE_URL || "https://blockexplorer.electroneum.com";
 
 // Contract addresses
-export const REGISTRAR_ADDRESS = import.meta.env.VITE_REGISTRAR_ADDRESS || "0x553B1D45CeE1111CE2940c76C23bFC1B70Ed37e3";
+export const REGISTRAR_ADDRESS = import.meta.env.VITE_REGISTRAR_ADDRESS || "0x4FC01fc5ACa3575281D038e718447E88D60B4Ac1";
 export const RESOLVER_ADDRESS = import.meta.env.VITE_RESOLVER_ADDRESS || "0x89CBcc827c71B21DFE3d65f544b72C992FC45AA4";
 
 // Reown
