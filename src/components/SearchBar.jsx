@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { green, greenGlow, muted, mutedLight, error, panel2, border } from "../theme.js";
+import { green, greenGlow, muted, mutedLight, error, panel2, border } from "../styles/theme.js";
 import { useCheckAvailability } from "../useCheckAvailability.js";
 import NeonButton from "./NeonButton.jsx";
 
