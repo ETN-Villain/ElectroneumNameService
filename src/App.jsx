@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useReownWallet } from "./hooks/useReownWallet.jsx";
-import { panel, muted } from "./theme.js";
+import { panel, muted } from "./styles/theme.js";
 import SearchBar from "./components/SearchBar.jsx";
 import RegistrationFlow from "./components/RegistrationFlow.jsx";
 import NamespaceFlow from "./components/NamespaceFlow.jsx";
