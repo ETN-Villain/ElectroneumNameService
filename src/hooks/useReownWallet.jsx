@@ -9,6 +9,8 @@ import {
   useDisconnect,
 } from "@reown/appkit/react";
 
+import { defineChain } from "@reown/appkit/networks";
+
 import {
   RPC_URL,
   CHAIN_ID,
