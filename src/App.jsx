@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 import { useReownWallet } from "./hooks/useReownWallet.jsx";
-import { panel, muted } from "./styles/theme.js";
+import { panel, muted } from "./theme.js";
 import SearchBar from "./components/SearchBar.jsx";
 import RegistrationFlow from "./components/RegistrationFlow.jsx";
+import NamespaceFlow from "./components/NamespaceFlow.jsx";
 
 function AppContent() {
   const wallet = useReownWallet();
   const [selectedName, setSelectedName] = useState(null);
+  const [showNamespaceFlow, setShowNamespaceFlow] = useState(false);
 
   const handleNameSelected = async (nameData) => {
-    // Not connected — open wallet modal
     if (!wallet.isConnected) {
       await wallet.connectWallet();
       return;
     }
 
-    // Try to switch to correct network
     try {
       await wallet.ensureCorrectNetwork();
     } catch (err) {
@@ -23,7 +23,6 @@ function AppContent() {
       return;
     }
 
-    // Success — store selection
     setSelectedName(nameData);
   };
 
@@ -31,10 +30,32 @@ function AppContent() {
     setSelectedName(null);
   };
 
+  const handleNamespaceFlow = async () => {
+    if (!wallet.isConnected) {
+      await wallet.connectWallet();
+      return;
+    }
+
+    try {
+      await wallet.ensureCorrectNetwork();
+    } catch (err) {
+      console.error("Network switch failed:", err);
+      return;
+    }
+
+    setShowNamespaceFlow(true);
+  };
+
+  const handleBackFromNamespace = () => {
+    setShowNamespaceFlow(false);
+  };
+
   const handleRegistrationSuccess = (result) => {
     console.log("Registration successful:", result);
-    // Could show a modal, toast, or redirect here
-    // For now, we let the user see the success screen and click to register another
+  };
+
+  const handleNamespaceSuccess = (result) => {
+    console.log("Namespace created:", result);
   };
 
   return (
@@ -59,19 +80,27 @@ function AppContent() {
 
       {/* Main content */}
       <div style={{ width: "100%", marginBottom: 40 }}>
-        {!selectedName ? (
+        {!selectedName && !showNamespaceFlow ? (
           // Search view
-          <SearchBar 
+          <SearchBar
             wallet={wallet}
             onNameSelected={handleNameSelected}
+            onNamespaceFlow={handleNamespaceFlow}
           />
-        ) : (
+        ) : selectedName ? (
           // Registration view
           <RegistrationFlow
             nameData={selectedName}
             wallet={wallet}
             onBack={handleBack}
             onSuccess={handleRegistrationSuccess}
+          />
+        ) : (
+          // Namespace creation view
+          <NamespaceFlow
+            wallet={wallet}
+            onBack={handleBackFromNamespace}
+            onSuccess={handleNamespaceSuccess}
           />
         )}
       </div>
