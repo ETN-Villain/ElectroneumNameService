@@ -173,8 +173,6 @@ export default function Header({
       width: isMobile ? "120px" : "220px",
       maxWidth: "100%",
       height: "auto",
-      filter: "drop-shadow(0 0 16px rgba(24,187,26,0.4))",
-      animation: "glow 2s ease-in-out infinite",
       objectFit: "contain",
     }}
   />
