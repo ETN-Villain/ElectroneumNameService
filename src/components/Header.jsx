@@ -20,25 +20,25 @@ export default function Header({
     display: "flex",
     flexDirection: isMobile ? "column" : "row",
     alignItems: isMobile ? "stretch" : "center",
-    justifyContent: "center",   // was "space-between"
+    justifyContent: "center",   // was "space-between" — this was the culprit
     gap: isMobile ? 10 : 18,
     width: "100%",
     marginBottom: 10,
   }}
 >
-    {/* WALLET SECTION */}
-<div
-  style={{
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    width: isMobile ? "100%" : "auto",
-    gap: 8,
-    flexShrink: 0,
-    order: isMobile ? -1 : 0, // mobile: first (top); desktop: first (left)
-  }}
->
-            {wallet.account ? (
+      {/* WALLET SECTION - Right aligned on mobile */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: isMobile ? "flex-end" : "flex-end",   // ← Right aligned on mobile
+          alignItems: "center",
+          width: isMobile ? "100%" : "auto",
+          gap: 8,
+          flexShrink: 0,
+          order: isMobile ? 0 : 2,
+        }}
+      >
+        {wallet.account ? (
           <div
             style={{
               display: "flex",
@@ -86,7 +86,7 @@ export default function Header({
         )}
       </div>
 
-{/* BRANDING SECTION - Tight & Organized */}
+{/* BRANDING SECTION */}
 <div
   style={{
     display: "flex",
@@ -95,9 +95,9 @@ export default function Header({
     justifyContent: "center",
     gap: 0,
     minWidth: 0,
-    flex: 1,
+    flex: "0 1 auto",   // was flex: 1
     width: "100%",
-    order: isMobile ? 1 : 1, // unchanged, but now wallet (order 0) sits before it
+    order: isMobile ? 1 : 1,
   }}
 >
   {/* Logo + Text (tight) */}
