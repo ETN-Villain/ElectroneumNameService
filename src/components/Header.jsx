@@ -23,9 +23,10 @@ export default function Header({
     justifyContent: isMobile ? "flex-start" : "space-between",
     gap: isMobile ? 10 : 18,
     width: "100%",
-    maxWidth: 680,        // ← constrain so wallet doesn't sit way out at the edge
-    margin: "0 auto",     // ← center that constrained row on the page
+    maxWidth: 680,
+    margin: "0 auto",
     marginBottom: 32,
+    overflow: "hidden",   // ← prevents any child overflow from shifting page layout
   }}
 >
       {/* WALLET SECTION - Right aligned on mobile */}
@@ -102,22 +103,25 @@ export default function Header({
     order: isMobile ? 1 : 1,
   }}
 >
-  {/* Logo + Text (tight) */}
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: 2,
-      justifyContent: "center",
-      marginBottom: 8,
-    }}
-  >
+{/* Logo + Text (tight) */}
+<div
+  style={{
+    display: "flex",
+    flexWrap: "wrap",          // ← allow wrapping instead of overflowing
+    alignItems: "center",
+    gap: 2,
+    justifyContent: "center",
+    marginBottom: 8,
+    width: "100%",              // ← constrain to parent width
+    maxWidth: "100%",
+  }}
+>
 {PlanetZephyrosLogo && (
   <img
     src={PlanetZephyrosLogo}
     alt="Planet Zephyros"
     style={{
-      height: isMobile ? 56 : 72,
+      height: isMobile ? 40 : 72,   // was 56
       width: "auto",
       display: "block",
       pointerEvents: "none",
@@ -130,21 +134,21 @@ export default function Header({
   />
 )}
 
-    {PlanetZephyrosText && (
-      <img
-        src={PlanetZephyrosText}
-        alt="Planet Zephyros"
-        style={{
-          height: isMobile ? 56 : 72,
-          width: "auto",
-          display: "block",
-          filter: "drop-shadow(0 0 12px rgba(0,255,140,0.25))",
-          animation: "vaultPulse 2.2s infinite",
-          objectFit: "contain",
-          flexShrink: 0,
-        }}
-      />
-    )}
+{PlanetZephyrosText && (
+  <img
+    src={PlanetZephyrosText}
+    alt="Planet Zephyros"
+    style={{
+      height: isMobile ? 40 : 72,   // was 56
+      width: "auto",
+      display: "block",
+      filter: "drop-shadow(0 0 12px rgba(0,255,140,0.25))",
+      animation: "vaultPulse 2.2s infinite",
+      objectFit: "contain",
+      flexShrink: 0,
+    }}
+  />
+)}
   </div>
 
 {/* Service Text */}
