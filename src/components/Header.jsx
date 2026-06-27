@@ -23,7 +23,7 @@ export default function Header({
     justifyContent: isMobile ? "flex-start" : "space-between",
     gap: isMobile ? 10 : 18,
     width: "100%",
-    maxWidth: 960,        // ← constrain so wallet doesn't sit way out at the edge
+    maxWidth: 680,        // ← constrain so wallet doesn't sit way out at the edge
     margin: "0 auto",     // ← center that constrained row on the page
     marginBottom: 10,
   }}
