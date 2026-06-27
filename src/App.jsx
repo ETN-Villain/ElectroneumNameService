@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useReownWallet } from "./hooks/useReownWallet.jsx";
 import { panel, muted } from "./styles/theme.js";
 import SearchBar from "./components/SearchBar.jsx";
@@ -14,7 +14,7 @@ function AppContent() {
   useEffect(() => {
     // Empty effect just triggers re-render
   }, [wallet.isConnected, wallet.account]);
-  
+
   const handleNameSelected = async (nameData) => {
     if (!wallet.isConnected) {
       await wallet.connectWallet();
