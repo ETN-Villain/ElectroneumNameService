@@ -74,14 +74,34 @@ function AppContent() {
       padding: "40px 20px",
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     }}>
-      {/* Header with wallet button */}
-      <div style={{
-        position: "absolute",
-        top: 20,
-        right: 20,
-      }}>
-        <w3m-connect-button />
-      </div>
+{/* Header with wallet button */}
+<div style={{
+  position: "absolute",
+  top: 20,
+  right: 20,
+}}>
+  <button
+    onClick={wallet.isConnected ? wallet.disconnectWallet : wallet.connectWallet}
+    style={{
+      padding: "10px 16px",
+      borderRadius: 8,
+      background: "#3ea6ff",
+      color: "#fff",
+      border: "none",
+      cursor: "pointer",
+      fontSize: 13,
+      fontWeight: 600,
+      fontWeight: 600,
+      transition: "opacity 0.2s ease",
+    }}
+    onMouseEnter={(e) => e.target.style.opacity = "0.9"}
+    onMouseLeave={(e) => e.target.style.opacity = "1"}
+  >
+    {wallet.isConnected 
+      ? `${wallet.account?.slice(0, 6)}...${wallet.account?.slice(-4)}` 
+      : "Connect Wallet"}
+  </button>
+</div>
 
       {/* Main content */}
       <div style={{ width: "100%", marginBottom: 40 }}>
