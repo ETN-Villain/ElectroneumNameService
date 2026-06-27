@@ -1,6 +1,6 @@
 import React from "react";
 import { PlanetZephyrosLogo } from "../../assets/media.js";
-import { muted } from "../styles/theme.js";
+import { muted, mutedLight } from "../styles/theme.js";
 
 export default function Footer() {
   return (
