@@ -23,10 +23,9 @@ export default function Header({
     justifyContent: isMobile ? "flex-start" : "space-between",
     gap: isMobile ? 10 : 18,
     width: "100%",
-    maxWidth: 680,
-    margin: "0 auto",
+    maxWidth: 680,        // ← constrain so wallet doesn't sit way out at the edge
+    margin: "0 auto",     // ← center that constrained row on the page
     marginBottom: 32,
-    overflow: "hidden",   // ← prevents any child overflow from shifting page layout
   }}
 >
       {/* WALLET SECTION - Right aligned on mobile */}
@@ -107,49 +106,53 @@ export default function Header({
 <div
   style={{
     display: "flex",
-    flexWrap: "wrap",          // ← allow wrapping instead of overflowing
     alignItems: "center",
     gap: 2,
     justifyContent: "center",
     marginBottom: 8,
-    width: "100%",              // ← constrain to parent width
+    width: "100%",
     maxWidth: "100%",
+    overflow: "hidden",        // contains it instead of letting it bleed off-screen
+    boxSizing: "border-box",
+    padding: isMobile ? "0 12px" : 0,
   }}
 >
-{PlanetZephyrosLogo && (
-  <img
-    src={PlanetZephyrosLogo}
-    alt="Planet Zephyros"
-    style={{
-      height: isMobile ? 40 : 72,   // was 56
-      width: "auto",
-      display: "block",
-      pointerEvents: "none",
-      animation: "logoPulse 2.4s ease-in-out infinite",
-      filter: "drop-shadow(0 0 14px rgba(0,255,140,0.18))",
-      borderRadius: 8,
-      objectFit: "contain",
-      flexShrink: 0,
-    }}
-  />
-)}
-
-{PlanetZephyrosText && (
-  <img
-    src={PlanetZephyrosText}
-    alt="Planet Zephyros"
-    style={{
-      height: isMobile ? 40 : 72,   // was 56
-      width: "auto",
-      display: "block",
-      filter: "drop-shadow(0 0 12px rgba(0,255,140,0.25))",
-      animation: "vaultPulse 2.2s infinite",
-      objectFit: "contain",
-      flexShrink: 0,
-    }}
-  />
-)}
-  </div>
+  {PlanetZephyrosLogo && (
+    <img
+      src={PlanetZephyrosLogo}
+      alt="Planet Zephyros"
+      style={{
+        height: isMobile ? 32 : 72,
+        width: "auto",
+        maxWidth: isMobile ? "20%" : "none",
+        display: "block",
+        pointerEvents: "none",
+        animation: "logoPulse 2.4s ease-in-out infinite",
+        filter: "drop-shadow(0 0 14px rgba(0,255,140,0.18))",
+        borderRadius: 8,
+        objectFit: "contain",
+        flexShrink: 0,
+      }}
+    />
+  )}
+  {PlanetZephyrosText && (
+    <img
+      src={PlanetZephyrosText}
+      alt="Planet Zephyros"
+      style={{
+        height: isMobile ? 32 : 72,
+        width: "auto",
+        maxWidth: isMobile ? "70%" : "none",
+        display: "block",
+        filter: "drop-shadow(0 0 12px rgba(0,255,140,0.25))",
+        animation: "vaultPulse 2.2s infinite",
+        objectFit: "contain",
+        flexShrink: 0,
+        minWidth: 0,
+      }}
+    />
+  )}
+</div>
 
 {/* Service Text */}
 {electroneumnameservicetext && (

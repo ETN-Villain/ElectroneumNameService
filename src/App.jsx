@@ -9,6 +9,13 @@ import Footer from "./components/Footer.jsx";
 
 function AppContent() {
   const wallet = useReownWallet();
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     console.log("AppContent re-render - wallet.isConnected:", wallet.isConnected, "account:", wallet.account);
@@ -77,7 +84,7 @@ function AppContent() {
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     }}>
       {/* HEADER — Always render, includes wallet button */}
-      <Header wallet={wallet} isMobile={false} />
+      <Header wallet={wallet} isMobile={isMobile} />
 
       {/* Main content — Conditional rendering */}
       <div style={{ width: "100%", marginBottom: 40 }}>
