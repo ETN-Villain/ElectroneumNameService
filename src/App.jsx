@@ -67,7 +67,7 @@ function AppContent() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: `linear-gradient(135deg, ${panel}, #0a0a0a)`,
+      background: "#011528",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
