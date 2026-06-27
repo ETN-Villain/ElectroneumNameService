@@ -110,9 +110,9 @@ export default function Header({
       marginBottom: 8,
     }}
   >
-{PlanetZephyrosAE && (
+{PlanetZephyrosLogo && (
   <img
-    src={PlanetZephyrosAE}
+    src={PlanetZephyrosLogo}
     alt="Planet Zephyros"
     style={{
       height: isMobile ? 56 : 72,
