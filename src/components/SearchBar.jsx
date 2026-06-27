@@ -20,6 +20,10 @@ export default function SearchBar({ wallet, onNameSelected = null, onNamespaceFl
       return;
     }
 
+useEffect(() => {
+  console.log("Wallet connected:", wallet.isConnected, wallet.account);
+}, [wallet.isConnected, wallet.account]);
+    
     const timer = setTimeout(async () => {
       setCheckingDebounce(true);
       try {
