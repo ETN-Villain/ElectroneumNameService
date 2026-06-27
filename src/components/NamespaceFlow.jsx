@@ -114,26 +114,46 @@ export default function NamespaceFlow({
   </button>
 </div>
 
-          {/* Header */}
-          <div style={{ marginBottom: 32, textAlign: "center" }}>
-            <h2 style={{
-              fontSize: 28,
-              fontWeight: 900,
-              margin: "0 0 8px 0",
-              color: green,
-            }}>
-              Create Subdomain
-            </h2>
-            <p style={{ fontSize: 13, color: mutedLight, margin: 0 }}>
-              Your own .etn namespace for team members
-            </p>
-          </div>
+{/* Header */}
+<div style={{ marginBottom: 32, textAlign: "center" }}>
+  <div style={{
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: 1.5,
+    textTransform: "uppercase",
+    color: muted,
+    marginBottom: 10,
+  }}>
+    New Namespace
+  </div>
+  <h2 style={{
+    fontSize: 30,
+    fontWeight: 900,
+    margin: "0 0 12px 0",
+    color: "#fff",
+    letterSpacing: 0.5,
+    textShadow: `0 0 16px ${greenGlow}`,
+  }}>
+    Create Subdomain
+  </h2>
+  <div style={{
+    width: 40,
+    height: 2,
+    background: green,
+    margin: "0 auto 14px",
+    borderRadius: 2,
+    boxShadow: `0 0 8px ${greenGlow}`,
+  }} />
+  <p style={{ fontSize: 13, color: mutedLight, margin: 0, lineHeight: 1.5 }}>
+    Your own "project".etn namespace for team members or community supporters
+  </p>
+</div>
 
           {/* Namespace input */}
           <div style={{ marginBottom: 24 }}>
             <input
               type="text"
-              placeholder="mycompany"
+              placeholder="supplychainltd"
               value={namespaceInput}
               onChange={(e) => setNamespaceInput(e.target.value.toLowerCase().trim())}
               style={{
@@ -239,8 +259,8 @@ export default function NamespaceFlow({
             <div style={{ marginBottom: 8 }}>
               <strong>What you get:</strong>
             </div>
-            <div>✓ Custom .etn subdomain</div>
-            <div>✓ Mint names under it (alice.mycompany.etn)</div>
+            <div>✓ Custom "project".etn subdomain</div>
+            <div>✓ Mint names under it (warehouse.supplychainltd.etn)</div>
             <div>✓ Full control & ownership</div>
             {!lifetime && (
               <div>✓ Renewable after 1 year</div>
@@ -258,7 +278,7 @@ export default function NamespaceFlow({
             color: "#ffb366",
             textAlign: "center",
           }}>
-            Creating a subdomain involves a blockchain transaction and gas fees
+            Creating a subdomain involves a blockchain transaction
           </div>
 
           {/* Buttons */}
@@ -304,7 +324,7 @@ export default function NamespaceFlow({
           }}>
             <strong>{namespaceInput}.etn</strong> is now your subdomain.
             <br />
-            You can now mint names under it.
+            You can now mint names under it using Create Name | Project Name
           </p>
           {txHash && (
             <a

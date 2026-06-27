@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
+import { ArrowLeft } from "lucide-react";
 import { green, greenGlow, muted, mutedLight, error, panel2, border, orange } from "../styles/theme.js";
 import { useRegistration } from "../hooks/useRegistration.js";
 import NeonButton from "./NeonButton.jsx";
@@ -93,37 +94,77 @@ export default function RegistrationFlow({
     <div style={{ width: "100%", maxWidth: 600, margin: "0 auto", padding: "0 16px" }}>
       {step === "choose" && (
         <>
-          {/* Back button */}
-          <div style={{ marginBottom: 20 }}>
-            <button
-              onClick={onBack}
-              style={{
-                fontSize: 13,
-                color: green,
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: 0,
-              }}
-            >
-              ← Back
-            </button>
-          </div>
+{/* Back button */}
+<div style={{ marginBottom: 20 }}>
+  <button
+    onClick={onBack}
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+      fontSize: 13,
+      fontWeight: 600,
+      color: green,
+      background: "rgba(0, 255, 140, 0.06)",
+      border: `1px solid ${border}`,
+      borderRadius: 10,
+      cursor: "pointer",
+      padding: "8px 14px",
+      transition: "background 0.15s ease, transform 0.1s ease",
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.background = "rgba(0, 255, 140, 0.14)";
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.background = "rgba(0, 255, 140, 0.06)";
+    }}
+    onMouseDown={(e) => {
+      e.currentTarget.style.transform = "scale(0.97)";
+    }}
+    onMouseUp={(e) => {
+      e.currentTarget.style.transform = "scale(1)";
+    }}
+  >
+    <ArrowLeft size={14} />
+    Back
+  </button>
+</div>
 
-          {/* Header */}
-          <div style={{ marginBottom: 32, textAlign: "center" }}>
-            <h2 style={{ 
-              fontSize: 28, 
-              fontWeight: 900, 
-              margin: "0 0 8px 0",
-              color: green,
-            }}>
-              Register {displayName}
-            </h2>
-            <p style={{ fontSize: 13, color: mutedLight, margin: 0 }}>
-              Choose your registration term
-            </p>
-          </div>
+{/* Header */}
+<div style={{ marginBottom: 32, textAlign: "center" }}>
+  <div style={{
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: 1.5,
+    textTransform: "uppercase",
+    color: muted,
+    marginBottom: 10,
+  }}>
+    Register Your Name
+  </div>
+  <h2 style={{
+    fontSize: 30,
+    fontWeight: 900,
+    margin: "0 0 12px 0",
+    color: "#fff",
+    fontFamily: "monospace",
+    letterSpacing: 0.5,
+    textShadow: `0 0 16px ${greenGlow}`,
+  }}>
+    {displayName}
+  </h2>
+  <div style={{
+    width: 40,
+    height: 2,
+    background: green,
+    margin: "0 auto 14px",
+    borderRadius: 2,
+    boxShadow: `0 0 8px ${greenGlow}`,
+  }} />
+  <p style={{ fontSize: 13, color: mutedLight, margin: 0 }}>
+    Choose your registration term
+  </p>
+</div>
 
           {/* Duration choice with BOTH prices visible */}
           <div style={{ marginBottom: 24, display: "flex", gap: 12 }}>
@@ -235,7 +276,7 @@ export default function RegistrationFlow({
             color: "#ffb366",
             textAlign: "center",
           }}>
-            Registration involves a blockchain transaction and will cost gas
+            Registration involves a blockchain transaction
           </div>
 
           {/* Buttons */}
