@@ -108,27 +108,46 @@ const handleCreateName = useCallback(() => {
       {/* NAME CREATION VIEW */}
       {view === "name" && (
         <>
-          {/* Back button */}
-          <div style={{ marginBottom: 20 }}>
-            <button
-              onClick={() => {
-                setView("main");
-                setNameInput("");
-                setProjectInput("");
-                setAvailability(null);
-              }}
-              style={{
-                fontSize: 13,
-                color: green,
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: 0,
-              }}
-            >
-              ← Back
-            </button>
-          </div>
+{/* Back button */}
+<div style={{ marginBottom: 20 }}>
+  <button
+    onClick={() => {
+      setView("main");
+      setNameInput("");
+      setProjectInput("");
+      setAvailability(null);
+    }}
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+      fontSize: 13,
+      fontWeight: 600,
+      color: green,
+      background: "rgba(0, 255, 140, 0.06)",
+      border: `1px solid ${border}`,
+      borderRadius: 10,
+      cursor: "pointer",
+      padding: "8px 14px",
+      transition: "background 0.15s ease, transform 0.1s ease",
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.background = "rgba(0, 255, 140, 0.14)";
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.background = "rgba(0, 255, 140, 0.06)";
+    }}
+    onMouseDown={(e) => {
+      e.currentTarget.style.transform = "scale(0.97)";
+    }}
+    onMouseUp={(e) => {
+      e.currentTarget.style.transform = "scale(1)";
+    }}
+  >
+    <ArrowLeft size={14} />
+    Back
+  </button>
+</div>
 
           {/* Registration type toggle */}
           <div style={{ marginBottom: 20, display: "flex", gap: 8 }}>
