@@ -6,6 +6,7 @@ import TelegramLogoImg from "./TelegramLogo.png";
 import XLogoImg from "./XLogo.png";
 import PlanetZephyrosLogoImg from "./PlanetZephyrosLogo.png";
 import PlanetZephyrosTextImg from "./PlanetZephyrosText.png";
+import electroneumnameservicetextImg from "./electroneumnameservicetext.png"
 
 export const CoreClashLogo = CoreClashLogoImg;
 export const PlanetZephyrosAE = PlanetZephyrosAEVideo;
@@ -15,3 +16,4 @@ export const TelegramLogo = TelegramLogoImg;
 export const XLogo = XLogoImg;
 export const PlanetZephyrosLogo = PlanetZephyrosLogoImg;
 export const PlanetZephyrosText = PlanetZephyrosTextImg;
+export const electroneumnameservicetext = electroneumnameservicetextImg

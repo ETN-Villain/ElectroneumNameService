@@ -3,7 +3,7 @@ import { Wallet } from "lucide-react";
 
 import NeonButton from "./NeonButton.jsx";
 import { green, panel, border } from "../styles/theme.js";
-import { PlanetZephyrosAE, PlanetZephyrosText } from "../../assets/media.js";
+import { PlanetZephyrosAE, PlanetZephyrosText, electroneumnameservicetext } from "../../assets/media.js";
 
 function shortAddress(address) {
   if (!address) return "";
@@ -86,77 +86,101 @@ export default function Header({
         )}
       </div>
 
-      {/* BRANDING SECTION - Centered on mobile */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: isMobile ? "center" : "center",
-          gap: isMobile ? 12 : 16,
-          minWidth: 0,
-          flex: 1,
-          width: "100%",
-          order: isMobile ? 1 : 1,
-        }}
-      >
-        {/* Planet Zephyros Video Logo */}
-        {PlanetZephyrosAE ? (
-          <div
-            style={{
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              flexShrink: 0,
-            }}
-          >
-            <video
-              src={PlanetZephyrosAE}
-              autoPlay
-              loop
-              muted
-              playsInline
-              style={{
-                height: isMobile ? 82 : 112,
-                width: "auto",
-                display: "block",
-                pointerEvents: "none",
-                animation: "logoPulse 2.4s ease-in-out infinite",
-                filter: "drop-shadow(0 0 14px rgba(0,255,140,0.18))",
-                borderRadius: 12,
-                objectFit: "contain",
-              }}
-            />
-          </div>
-        ) : null}
-
-{/* PlanetZephyrosText */}
-<img
-  src={PlanetZephyrosText}
-  alt="Planet Zephyros"
-  style={{
-    width: isMobile ? "280px" : "520px",
-    maxWidth: "100%",
-    height: "auto",
-    filter: "drop-shadow(0 0 18px rgba(0,255,140,0.45))",
-    animation: "vaultPulse 2.2s infinite",
-    objectFit: "contain",
-  }}
-/>
-
-{/* Tagline */}
+{/* BRANDING SECTION */}
 <div
   style={{
-    marginTop: 12,
-    fontSize: isMobile ? 11 : 13,
-    fontWeight: 600,
-    letterSpacing: 0.5,
-    color: "#cfcfcf",
-    textShadow: "0 0 8px rgba(24,187,26,0.15)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: isMobile ? "center" : "center",
+    justifyContent: "center",
+    gap: isMobile ? 6 : 8,
+    minWidth: 0,
+    flex: 1,
+    width: "100%",
+    order: isMobile ? 1 : 1,
   }}
 >
-  Simplify your wallet
+  {/* PlanetZephyrosAE + PlanetZephyrosText (tight) */}
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: 2,
+      justifyContent: "center",
+    }}
+  >
+    {/* Planet Zephyros Video Logo */}
+    {PlanetZephyrosAE && (
+      <video
+        src={PlanetZephyrosAE}
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          height: isMobile ? 60 : 80,
+          width: "auto",
+          display: "block",
+          pointerEvents: "none",
+          animation: "logoPulse 2.4s ease-in-out infinite",
+          filter: "drop-shadow(0 0 14px rgba(0,255,140,0.18))",
+          borderRadius: 8,
+          objectFit: "contain",
+          flexShrink: 0,
+        }}
+      />
+    )}
+
+    {/* PlanetZephyrosText */}
+    {PlanetZephyrosText && (
+      <img
+        src={PlanetZephyrosText}
+        alt="Planet Zephyros"
+        style={{
+          height: isMobile ? 60 : 80,
+          width: "auto",
+          display: "block",
+          filter: "drop-shadow(0 0 12px rgba(0,255,140,0.25))",
+          animation: "vaultPulse 2.2s infinite",
+          objectFit: "contain",
+          flexShrink: 0,
+        }}
+      />
+    )}
+  </div>
+
+  {/* Electroneum Name Service Text */}
+  {electroneumnameservicetext && (
+    <img
+      src={electroneumnameservicetext}
+      alt="Electroneum Name Service"
+      style={{
+        width: isMobile ? "280px" : "520px",
+        maxWidth: "100%",
+        height: "auto",
+        filter: "drop-shadow(0 0 16px rgba(0,255,140,0.35))",
+        animation: "vaultPulse 2.2s infinite",
+        objectFit: "contain",
+      }}
+    />
+  )}
+
+  {/* Tagline - Styled better */}
+  <div
+    style={{
+      marginTop: 4,
+      fontSize: isMobile ? 12 : 14,
+      fontWeight: 700,
+      letterSpacing: 1.2,
+      color: "#18bb1a",
+      textTransform: "uppercase",
+      textShadow: "0 0 16px rgba(24,187,26,0.4), 0 0 32px rgba(24,187,26,0.15)",
+      animation: "glow 2s ease-in-out infinite",
+    }}
+  >
+    Simplify Your Wallet
+  </div>
 </div>
-      </div>
     </div>
   );
 }
