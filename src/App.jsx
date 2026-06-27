@@ -7,13 +7,13 @@ import NamespaceFlow from "./components/NamespaceFlow.jsx";
 
 function AppContent() {
   const wallet = useReownWallet();
+
+    useEffect(() => {
+    console.log("AppContent re-render - wallet.isConnected:", wallet.isConnected, "account:", wallet.account);
+  }, [wallet.isConnected, wallet.account]);
+
   const [selectedName, setSelectedName] = useState(null);
   const [showNamespaceFlow, setShowNamespaceFlow] = useState(false);
-
-  // Force re-render when wallet connection changes
-  useEffect(() => {
-    // Empty effect just triggers re-render
-  }, [wallet.isConnected, wallet.account]);
 
   const handleNameSelected = async (nameData) => {
     if (!wallet.isConnected) {
