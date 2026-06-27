@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { green, greenGlow, muted, mutedLight, error, panel2, border, orange } from "../styles/theme.js";
 import { useRegistration } from "../hooks/useRegistration.js";
-import NeonButton from "../components/NeonButton.jsx";
+import NeonButton from "./NeonButton.jsx";
 
 export default function RegistrationFlow({ 
   nameData, 
@@ -11,10 +11,11 @@ export default function RegistrationFlow({
   onSuccess = null 
 }) {
   const [lifetime, setLifetime] = useState(false);
-  const [price, setPrice] = useState(null);
+  const [priceYear, setPriceYear] = useState(null);
+  const [priceLifetime, setPriceLifetime] = useState(null);
   const [priceLoading, setPriceLoading] = useState(true);
   const [txLoading, setTxLoading] = useState(false);
-  const [step, setStep] = useState("choose"); // "choose", "confirm", "success", "error"
+  const [step, setStep] = useState("choose");
   const [txHash, setTxHash] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
@@ -24,20 +25,23 @@ export default function RegistrationFlow({
     ? `${nameData.name}.etn`
     : `${nameData.name}.${nameData.project}.etn`;
 
-  // Fetch price when component mounts or lifetime changes
+  // Fetch BOTH prices on mount
   useEffect(() => {
     (async () => {
       setPriceLoading(true);
       try {
-        const p = await getPrice(nameData.type, lifetime);
-        setPrice(p);
+        const pYear = await getPrice(nameData.type, false);
+        const pLifetime = await getPrice(nameData.type, true);
+        setPriceYear(pYear);
+        setPriceLifetime(pLifetime);
       } catch (err) {
         console.error("Price fetch failed:", err);
-        setPrice(null);
+        setPriceYear(null);
+        setPriceLifetime(null);
       }
       setPriceLoading(false);
     })();
-  }, [lifetime, nameData.type, getPrice]);
+  }, [nameData.type, getPrice]);
 
   const handleRegister = async () => {
     if (!wallet.isConnected) {
@@ -57,7 +61,7 @@ export default function RegistrationFlow({
           nameData.name,
           signer,
           lifetime,
-          null // no custom resolver
+          null
         );
       } else {
         result = await registerProjectName(
@@ -81,13 +85,31 @@ export default function RegistrationFlow({
     }
   };
 
-  // Format price for display
-  const priceInEth = price ? parseFloat(ethers.formatEther(price)).toFixed(2) : "0.00";
+  const priceYearEth = priceYear ? parseFloat(ethers.formatEther(priceYear)).toFixed(2) : "0.00";
+  const priceLifetimeEth = priceLifetime ? parseFloat(ethers.formatEther(priceLifetime)).toFixed(2) : "0.00";
+  const selectedPrice = lifetime ? priceLifetimeEth : priceYearEth;
 
   return (
     <div style={{ width: "100%", maxWidth: 600, margin: "0 auto", padding: "0 16px" }}>
       {step === "choose" && (
         <>
+          {/* Back button */}
+          <div style={{ marginBottom: 20 }}>
+            <button
+              onClick={onBack}
+              style={{
+                fontSize: 13,
+                color: green,
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: 0,
+              }}
+            >
+              ← Back
+            </button>
+          </div>
+
           {/* Header */}
           <div style={{ marginBottom: 32, textAlign: "center" }}>
             <h2 style={{ 
@@ -103,7 +125,7 @@ export default function RegistrationFlow({
             </p>
           </div>
 
-          {/* Duration choice */}
+          {/* Duration choice with BOTH prices visible */}
           <div style={{ marginBottom: 24, display: "flex", gap: 12 }}>
             {/* 1-Year option */}
             <button
@@ -137,7 +159,7 @@ export default function RegistrationFlow({
                 <div style={{ fontSize: 12, color: muted }}>Loading...</div>
               ) : (
                 <div style={{ fontSize: 18, fontWeight: 900, color: green }}>
-                  {priceInEth} ETN
+                  {priceYearEth} ETN
                 </div>
               )}
             </button>
@@ -174,7 +196,7 @@ export default function RegistrationFlow({
                 <div style={{ fontSize: 12, color: muted }}>Loading...</div>
               ) : (
                 <div style={{ fontSize: 18, fontWeight: 900, color: green }}>
-                  {priceInEth} ETN
+                  {priceLifetimeEth} ETN
                 </div>
               )}
             </button>
@@ -234,7 +256,7 @@ export default function RegistrationFlow({
               loading={txLoading}
               style={{ flex: 1 }}
             >
-              {txLoading ? "Processing..." : `Register for ${priceInEth} ETN`}
+              {txLoading ? "Processing..." : `Register for ${selectedPrice} ETN`}
             </NeonButton>
           </div>
         </>

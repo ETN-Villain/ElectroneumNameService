@@ -11,29 +11,33 @@ export default function NamespaceFlow({
 }) {
   const [namespaceInput, setNamespaceInput] = useState("");
   const [lifetime, setLifetime] = useState(false);
-  const [price, setPrice] = useState(null);
+  const [priceYear, setPriceYear] = useState(null);
+  const [priceLifetime, setPriceLifetime] = useState(null);
   const [priceLoading, setPriceLoading] = useState(true);
   const [txLoading, setTxLoading] = useState(false);
-  const [step, setStep] = useState("choose"); // "choose", "success", "error"
+  const [step, setStep] = useState("choose");
   const [txHash, setTxHash] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
   const { getPrice, buyNamespace } = useNamespace();
 
-  // Fetch price when component mounts or lifetime changes
+  // Fetch BOTH prices on mount
   useEffect(() => {
     (async () => {
       setPriceLoading(true);
       try {
-        const p = await getPrice(lifetime);
-        setPrice(p);
+        const pYear = await getPrice(false);
+        const pLifetime = await getPrice(true);
+        setPriceYear(pYear);
+        setPriceLifetime(pLifetime);
       } catch (err) {
         console.error("Price fetch failed:", err);
-        setPrice(null);
+        setPriceYear(null);
+        setPriceLifetime(null);
       }
       setPriceLoading(false);
     })();
-  }, [lifetime, getPrice]);
+  }, [getPrice]);
 
   const handleBuy = async () => {
     if (!wallet.isConnected) {
@@ -51,7 +55,6 @@ export default function NamespaceFlow({
 
     try {
       const signer = await wallet.getSigner();
-
       const result = await buyNamespace(namespaceInput, signer, lifetime);
 
       setTxHash(result.txHash);
@@ -66,12 +69,31 @@ export default function NamespaceFlow({
     }
   };
 
-  const priceInEth = price ? parseFloat(ethers.formatEther(price)).toFixed(2) : "0.00";
+  const priceYearEth = priceYear ? parseFloat(ethers.formatEther(priceYear)).toFixed(2) : "0.00";
+  const priceLifetimeEth = priceLifetime ? parseFloat(ethers.formatEther(priceLifetime)).toFixed(2) : "0.00";
+  const selectedPrice = lifetime ? priceLifetimeEth : priceYearEth;
 
   return (
     <div style={{ width: "100%", maxWidth: 600, margin: "0 auto", padding: "0 16px" }}>
       {step === "choose" && (
         <>
+          {/* Back button */}
+          <div style={{ marginBottom: 20 }}>
+            <button
+              onClick={onBack}
+              style={{
+                fontSize: 13,
+                color: green,
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: 0,
+              }}
+            >
+              ← Back
+            </button>
+          </div>
+
           {/* Header */}
           <div style={{ marginBottom: 32, textAlign: "center" }}>
             <h2 style={{
@@ -132,7 +154,7 @@ export default function NamespaceFlow({
             )}
           </div>
 
-          {/* Duration choice */}
+          {/* Duration choice with BOTH prices visible */}
           <div style={{ marginBottom: 24, display: "flex", gap: 12 }}>
             <button
               onClick={() => setLifetime(false)}
@@ -153,7 +175,7 @@ export default function NamespaceFlow({
                 <div style={{ fontSize: 12, color: muted }}>Loading...</div>
               ) : (
                 <div style={{ fontSize: 18, fontWeight: 900, color: green }}>
-                  {priceInEth} ETN
+                  {priceYearEth} ETN
                 </div>
               )}
             </button>
@@ -177,7 +199,7 @@ export default function NamespaceFlow({
                 <div style={{ fontSize: 12, color: muted }}>Loading...</div>
               ) : (
                 <div style={{ fontSize: 18, fontWeight: 900, color: green }}>
-                  {priceInEth} ETN
+                  {priceLifetimeEth} ETN
                 </div>
               )}
             </button>
@@ -237,7 +259,7 @@ export default function NamespaceFlow({
               loading={txLoading}
               style={{ flex: 1 }}
             >
-              {txLoading ? "Creating..." : `Create for ${priceInEth} ETN`}
+              {txLoading ? "Creating..." : `Create for ${selectedPrice} ETN`}
             </NeonButton>
           </div>
         </>
