@@ -5,6 +5,7 @@ import SearchBar from "./components/SearchBar.jsx";
 import RegistrationFlow from "./components/RegistrationFlow.jsx";
 import NamespaceFlow from "./components/NamespaceFlow.jsx";
 import Header from "./components/Header.jsx";
+import Footer from "./components/Footer.jsx";
 
 function AppContent() {
   const wallet = useReownWallet();
