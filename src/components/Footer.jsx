@@ -55,18 +55,17 @@ export default function Footer() {
         }}
       />
 
-      <div
-        style={{
-          fontSize: 11,
-          color: "#555",
-          maxWidth: 560,
-          marginInline: "auto",
-          lineHeight: 1.4,
-        }}
-      >
-        Blockchain staking involves risk. Users are responsible for wallets,
-        transactions, approvals, and smart contract interactions.
-      </div>
+<div style={{ marginTop: 20, fontSize: 11, color: muted, textAlign: "center", lineHeight: 1.6 }}>
+  <div style={{ marginBottom: 8, fontWeight: 600, color: mutedLight }}>
+    Terms & Conditions
+  </div>
+  <div style={{ fontSize: 10, color: muted, maxWidth: 520, margin: "0 auto" }}>
+    <div>• All registrations are final. No refunds or cancellations after purchase.</div>
+    <div>• Names registered on-chain are immutable and permanent.</div>
+    <div>• We are not responsible for lost private keys or wallet access.</div>
+    <div>• Renewal reminders are your responsibility. Expired names may be re-registered by others.</div>
+  </div>
+</div>
     </div>
   );
 }
