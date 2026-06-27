@@ -3,7 +3,7 @@ import { Wallet } from "lucide-react";
 
 import NeonButton from "./NeonButton.jsx";
 import { green, panel, border } from "../styles/theme.js";
-import { PlanetZephyrosAE, PlanetZephyrosText, electroneumnameservicetext } from "../../assets/media.js";
+import { PlanetZephyrosLogo, PlanetZephyrosText, electroneumnameservicetext } from "../../assets/media.js";
 
 function shortAddress(address) {
   if (!address) return "";
@@ -110,26 +110,23 @@ export default function Header({
       marginBottom: 8,
     }}
   >
-    {PlanetZephyrosAE && (
-      <video
-        src={PlanetZephyrosAE}
-        autoPlay
-        loop
-        muted
-        playsInline
-        style={{
-          height: isMobile ? 56 : 72,
-          width: "auto",
-          display: "block",
-          pointerEvents: "none",
-          animation: "logoPulse 2.4s ease-in-out infinite",
-          filter: "drop-shadow(0 0 14px rgba(0,255,140,0.18))",
-          borderRadius: 8,
-          objectFit: "contain",
-          flexShrink: 0,
-        }}
-      />
-    )}
+{PlanetZephyrosAE && (
+  <img
+    src={PlanetZephyrosAE}
+    alt="Planet Zephyros"
+    style={{
+      height: isMobile ? 56 : 72,
+      width: "auto",
+      display: "block",
+      pointerEvents: "none",
+      animation: "logoPulse 2.4s ease-in-out infinite",
+      filter: "drop-shadow(0 0 14px rgba(0,255,140,0.18))",
+      borderRadius: 8,
+      objectFit: "contain",
+      flexShrink: 0,
+    }}
+  />
+)}
 
     {PlanetZephyrosText && (
       <img
