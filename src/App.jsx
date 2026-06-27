@@ -106,16 +106,7 @@ function AppContent() {
         )}
       </div>
 
-      {/* Footer */}
-      <div style={{
-        position: "absolute",
-        bottom: 20,
-        fontSize: 11,
-        color: muted,
-        textAlign: "center",
-      }}>
-        Planet Zephyros - Electroneum Name Service
-      </div>
+        <Footer />
     </div>
   );
 }
