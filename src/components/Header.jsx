@@ -3,7 +3,7 @@ import { Wallet } from "lucide-react";
 
 import NeonButton from "./NeonButton.jsx";
 import { green, panel, border } from "../styles/theme.js";
-import { PlanetZephyrosLogo, PlanetZephyrosText, electroneumnameservicetext } from "../../assets/media.js";
+import { PlanetZephyrosLogo, PlanetZephyrosText, electroneumnameservicetext, SimplifyYourWallet } from "../../assets/media.js";
 
 function shortAddress(address) {
   if (!address) return "";
@@ -164,20 +164,21 @@ export default function Header({
   />
 )}
 
-  {/* Tagline */}
-  <div
+{/* Tagline */}
+{SimplifyYourWallet && (
+  <img
+    src={SimplifyYourWallet}
+    alt="Simplify Your Wallet"
     style={{
-      fontSize: isMobile ? 11 : 13,
-      fontWeight: 700,
-      letterSpacing: 1.2,
-      color: "#1b9cca",
-      textTransform: "uppercase",
-      textShadow: "0 0 16px rgba(24,187,26,0.4), 0 0 32px rgba(24,187,26,0.15)",
+      width: isMobile ? "120px" : "220px",
+      maxWidth: "100%",
+      height: "auto",
+      filter: "drop-shadow(0 0 16px rgba(24,187,26,0.4))",
       animation: "glow 2s ease-in-out infinite",
+      objectFit: "contain",
     }}
-  >
-    Simplify Your Wallet
-  </div>
+  />
+)}
 </div>
     </div>
   );
