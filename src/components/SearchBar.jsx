@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { green, greenGlow, muted, mutedLight, error, panel2, border } from "../styles/theme.js";
 import { useCheckAvailability } from "../hooks/useCheckAvailability.js";
 import NeonButton from "./NeonButton.jsx";
@@ -62,13 +62,16 @@ export default function SearchBar({ wallet, onNameSelected = null, onNamespaceFl
     });
   };
 
-  const handleCreateName = () => {
-    if (!wallet?.isConnected) {
-      wallet?.connectWallet();
-      return;
-    }
-    setView("name");
-  };
+const handleCreateName = useCallback(() => {
+  console.log("handleCreateName called - wallet.isConnected:", wallet?.isConnected);
+  if (!wallet?.isConnected) {
+    console.log("Not connected, calling connectWallet");
+    wallet?.connectWallet?.();
+    return;
+  }
+  console.log("Connected! Setting view to 'name'");
+  setView("name");
+}, [wallet?.isConnected, wallet?.connectWallet, setView]);
 
   const handleCreateSubdomain = () => {
     if (!wallet?.isConnected) {
@@ -99,25 +102,25 @@ export default function SearchBar({ wallet, onNameSelected = null, onNamespaceFl
       </div>
 
       {/* MAIN VIEW */}
-      {view === "main" && (
-        <>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <NeonButton
-              variant="green"
-              onClick={handleCreateName}
-              style={{ width: "100%", justifyContent: "center", padding: "16px" }}
-            >
-              Create Name
-            </NeonButton>
-            <NeonButton
-              variant="green"
-              onClick={handleCreateSubdomain}
-              style={{ width: "100%", justifyContent: "center", padding: "16px" }}
-            >
-              Create Subdomain
-            </NeonButton>
-          </div>
-
+{view === "main" && (
+  <>
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <NeonButton
+        variant="green"
+        onClick={handleCreateName}
+        style={{ width: "100%", justifyContent: "center", padding: "16px" }}
+      >
+        {wallet?.isConnected ? "Create Name" : "Connect Wallet"}
+      </NeonButton>
+      <NeonButton
+        variant="green"
+        onClick={handleCreateSubdomain}
+        style={{ width: "100%", justifyContent: "center", padding: "16px" }}
+      >
+        {wallet?.isConnected ? "Create Subdomain" : "Connect Wallet"}
+      </NeonButton>
+    </div>
+    
           <div style={{ marginTop: 20, fontSize: 11, color: muted, textAlign: "center", lineHeight: 1.6 }}>
             <div>Register .etn names or create your own namespace</div>
           </div>
