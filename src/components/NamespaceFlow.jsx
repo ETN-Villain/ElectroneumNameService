@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
+import { ArrowLeft } from "lucide-react";
 import { green, greenGlow, muted, mutedLight, error, panel2, border, orange } from "../styles/theme.js";
 import { useNamespace } from "../hooks/useNamespace.js";
 import NeonButton from "./NeonButton.jsx";
@@ -77,22 +78,41 @@ export default function NamespaceFlow({
     <div style={{ width: "100%", maxWidth: 600, margin: "0 auto", padding: "0 16px" }}>
       {step === "choose" && (
         <>
-          {/* Back button */}
-          <div style={{ marginBottom: 20 }}>
-            <button
-              onClick={onBack}
-              style={{
-                fontSize: 13,
-                color: green,
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: 0,
-              }}
-            >
-              ← Back
-            </button>
-          </div>
+{/* Back button */}
+<div style={{ marginBottom: 20 }}>
+  <button
+    onClick={onBack}
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+      fontSize: 13,
+      fontWeight: 600,
+      color: green,
+      background: "rgba(0, 255, 140, 0.06)",
+      border: `1px solid ${border}`,
+      borderRadius: 10,
+      cursor: "pointer",
+      padding: "8px 14px",
+      transition: "background 0.15s ease, transform 0.1s ease",
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.background = "rgba(0, 255, 140, 0.14)";
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.background = "rgba(0, 255, 140, 0.06)";
+    }}
+    onMouseDown={(e) => {
+      e.currentTarget.style.transform = "scale(0.97)";
+    }}
+    onMouseUp={(e) => {
+      e.currentTarget.style.transform = "scale(1)";
+    }}
+  >
+    <ArrowLeft size={14} />
+    Back
+  </button>
+</div>
 
           {/* Header */}
           <div style={{ marginBottom: 32, textAlign: "center" }}>
