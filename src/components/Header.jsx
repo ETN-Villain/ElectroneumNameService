@@ -145,22 +145,22 @@ export default function Header({
     )}
   </div>
 
-  {/* Service Text */}
-  {electroneumnameservicetext && (
-    <img
-      src={electroneumnameservicetext}
-      alt="Electroneum Name Service"
-      style={{
-        width: isMobile ? "260px" : "480px",
-        maxWidth: "100%",
-        height: "auto",
-        filter: "drop-shadow(0 0 16px rgba(0,255,140,0.35))",
-        animation: "vaultPulse 2.2s infinite",
-        objectFit: "contain",
-        marginBottom: 12,
-      }}
-    />
-  )}
+{/* Service Text */}
+{electroneumnameservicetext && (
+  <img
+    src={electroneumnameservicetext}
+    alt="Electroneum Name Service"
+    style={{
+      width: isMobile ? "140px" : "300px",
+      maxWidth: "100%",
+      height: "auto",
+      filter: "drop-shadow(0 0 16px rgba(0,255,140,0.35))",
+      animation: "vaultPulse 2.2s infinite",
+      objectFit: "contain",
+      marginBottom: 12,
+    }}
+  />
+)}
 
   {/* Tagline */}
   <div
