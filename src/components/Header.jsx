@@ -25,7 +25,7 @@ export default function Header({
     width: "100%",
     maxWidth: 680,        // ← constrain so wallet doesn't sit way out at the edge
     margin: "0 auto",     // ← center that constrained row on the page
-    marginBottom: 10,
+    marginBottom: 32,
   }}
 >
       {/* WALLET SECTION - Right aligned on mobile */}
