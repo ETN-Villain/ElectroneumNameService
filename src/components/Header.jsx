@@ -86,30 +86,30 @@ export default function Header({
         )}
       </div>
 
-{/* BRANDING SECTION */}
+{/* BRANDING SECTION - Tight & Organized */}
 <div
   style={{
     display: "flex",
     flexDirection: "column",
-    alignItems: isMobile ? "center" : "center",
+    alignItems: "center",
     justifyContent: "center",
-    gap: isMobile ? 6 : 8,
+    gap: 0,
     minWidth: 0,
     flex: 1,
     width: "100%",
     order: isMobile ? 1 : 1,
   }}
 >
-  {/* PlanetZephyrosAE + PlanetZephyrosText (tight) */}
+  {/* Logo + Text (tight) */}
   <div
     style={{
       display: "flex",
       alignItems: "center",
       gap: 2,
       justifyContent: "center",
+      marginBottom: 8,
     }}
   >
-    {/* Planet Zephyros Video Logo */}
     {PlanetZephyrosAE && (
       <video
         src={PlanetZephyrosAE}
@@ -118,7 +118,7 @@ export default function Header({
         muted
         playsInline
         style={{
-          height: isMobile ? 60 : 80,
+          height: isMobile ? 56 : 72,
           width: "auto",
           display: "block",
           pointerEvents: "none",
@@ -131,13 +131,12 @@ export default function Header({
       />
     )}
 
-    {/* PlanetZephyrosText */}
     {PlanetZephyrosText && (
       <img
         src={PlanetZephyrosText}
         alt="Planet Zephyros"
         style={{
-          height: isMobile ? 60 : 80,
+          height: isMobile ? 56 : 72,
           width: "auto",
           display: "block",
           filter: "drop-shadow(0 0 12px rgba(0,255,140,0.25))",
@@ -149,27 +148,27 @@ export default function Header({
     )}
   </div>
 
-  {/* Electroneum Name Service Text */}
+  {/* Service Text */}
   {electroneumnameservicetext && (
     <img
       src={electroneumnameservicetext}
       alt="Electroneum Name Service"
       style={{
-        width: isMobile ? "280px" : "520px",
+        width: isMobile ? "260px" : "480px",
         maxWidth: "100%",
         height: "auto",
         filter: "drop-shadow(0 0 16px rgba(0,255,140,0.35))",
         animation: "vaultPulse 2.2s infinite",
         objectFit: "contain",
+        marginBottom: 12,
       }}
     />
   )}
 
-  {/* Tagline - Styled better */}
+  {/* Tagline */}
   <div
     style={{
-      marginTop: 4,
-      fontSize: isMobile ? 12 : 14,
+      fontSize: isMobile ? 11 : 13,
       fontWeight: 700,
       letterSpacing: 1.2,
       color: "#18bb1a",
