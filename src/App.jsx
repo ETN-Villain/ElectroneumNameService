@@ -87,11 +87,12 @@ function AppContent() {
       <div style={{ width: "100%", marginBottom: 40 }}>
         {!selectedName && !showNamespaceFlow ? (
           // Search view
-          <SearchBar
-            wallet={wallet}
-            onNameSelected={handleNameSelected}
-            onNamespaceFlow={handleNamespaceFlow}
-          />
+<SearchBar
+  key={wallet.isConnected ? "connected" : "disconnected"}
+  wallet={wallet}
+  onNameSelected={handleNameSelected}
+  onNamespaceFlow={handleNamespaceFlow}
+/>
         ) : selectedName ? (
           // Registration view
           <RegistrationFlow
