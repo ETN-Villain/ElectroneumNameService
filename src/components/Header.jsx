@@ -129,7 +129,7 @@ export default function Header({
           </div>
         ) : null}
 
-        {/* Text + CoreAscension Logo */}
+        {/* Text */}
         <div
           style={{
             display: "flex",
@@ -151,21 +151,6 @@ export default function Header({
           >
             Planet Zephyros
           </div>
-
-          {/* Core Ascension Logo */}
-          <img
-            src={CoreAscensionLogo}
-            alt="Core Ascension"
-            style={{
-              margin: 0,
-              width: isMobile ? "280px" : "520px",
-              maxWidth: "100%",
-              height: "auto",
-              filter: "drop-shadow(0 0 18px rgba(0,255,140,0.45))",
-              animation: "vaultPulse 2.2s infinite",
-              objectFit: "contain",
-            }}
-          />
 
           {/* Guardians of Erevos Text */}
           <div
