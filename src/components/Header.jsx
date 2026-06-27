@@ -20,9 +20,11 @@ export default function Header({
     display: "flex",
     flexDirection: isMobile ? "column" : "row",
     alignItems: isMobile ? "stretch" : "center",
-    justifyContent: "center",   // was "space-between" — this was the culprit
+    justifyContent: isMobile ? "flex-start" : "space-between",
     gap: isMobile ? 10 : 18,
     width: "100%",
+    maxWidth: 960,        // ← constrain so wallet doesn't sit way out at the edge
+    margin: "0 auto",     // ← center that constrained row on the page
     marginBottom: 10,
   }}
 >
