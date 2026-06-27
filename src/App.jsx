@@ -4,6 +4,7 @@ import { panel, muted } from "./styles/theme.js";
 import SearchBar from "./components/SearchBar.jsx";
 import RegistrationFlow from "./components/RegistrationFlow.jsx";
 import NamespaceFlow from "./components/NamespaceFlow.jsx";
+import Header from "./components/Header.jsx";
 
 function AppContent() {
   const wallet = useReownWallet();
@@ -106,6 +107,11 @@ function AppContent() {
       {/* Main content */}
       <div style={{ width: "100%", marginBottom: 40 }}>
         {!selectedName && !showNamespaceFlow ? (
+<Header
+  wallet={wallet}
+  isMobile={isMobile}
+  PlanetZephyrosAE={PlanetZephyrosAE}
+/> ) : (
           // Search view
 <SearchBar
   key={wallet.isConnected ? "connected" : "disconnected"}
