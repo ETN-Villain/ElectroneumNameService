@@ -10,6 +10,11 @@ function AppContent() {
   const [selectedName, setSelectedName] = useState(null);
   const [showNamespaceFlow, setShowNamespaceFlow] = useState(false);
 
+  // Force re-render when wallet connection changes
+  useEffect(() => {
+    // Empty effect just triggers re-render
+  }, [wallet.isConnected, wallet.account]);
+  
   const handleNameSelected = async (nameData) => {
     if (!wallet.isConnected) {
       await wallet.connectWallet();
