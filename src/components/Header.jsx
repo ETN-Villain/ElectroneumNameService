@@ -106,13 +106,13 @@ export default function Header({
 <div
   style={{
     display: "flex",
+    flexWrap: "wrap",
     alignItems: "center",
-    gap: 2,
+    gap: 4,
     justifyContent: "center",
     marginBottom: 8,
     width: "100%",
     maxWidth: "100%",
-    overflow: "hidden",        // contains it instead of letting it bleed off-screen
     boxSizing: "border-box",
     padding: isMobile ? "0 12px" : 0,
   }}
@@ -122,9 +122,8 @@ export default function Header({
       src={PlanetZephyrosLogo}
       alt="Planet Zephyros"
       style={{
-        height: isMobile ? 32 : 72,
+        height: isMobile ? 52 : 72,
         width: "auto",
-        maxWidth: isMobile ? "20%" : "none",
         display: "block",
         pointerEvents: "none",
         animation: "logoPulse 2.4s ease-in-out infinite",
@@ -140,15 +139,13 @@ export default function Header({
       src={PlanetZephyrosText}
       alt="Planet Zephyros"
       style={{
-        height: isMobile ? 32 : 72,
+        height: isMobile ? 52 : 72,
         width: "auto",
-        maxWidth: isMobile ? "70%" : "none",
         display: "block",
         filter: "drop-shadow(0 0 12px rgba(0,255,140,0.25))",
         animation: "vaultPulse 2.2s infinite",
         objectFit: "contain",
         flexShrink: 0,
-        minWidth: 0,
       }}
     />
   )}
@@ -160,7 +157,7 @@ export default function Header({
     src={electroneumnameservicetext}
     alt="Electroneum Name Service"
     style={{
-      width: isMobile ? "140px" : "300px",
+      width: isMobile ? "200px" : "300px",
       maxWidth: "100%",
       height: "auto",
       filter: "drop-shadow(0 0 16px rgba(0,255,140,0.35))",
@@ -177,7 +174,7 @@ export default function Header({
     src={SimplifyYourWallet}
     alt="Simplify Your Wallet"
     style={{
-      width: isMobile ? "120px" : "220px",
+      width: isMobile ? "170px" : "220px",
       maxWidth: "100%",
       height: "auto",
       objectFit: "contain",
