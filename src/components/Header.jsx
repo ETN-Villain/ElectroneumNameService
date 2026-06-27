@@ -3,7 +3,7 @@ import { Wallet } from "lucide-react";
 
 import NeonButton from "./NeonButton.jsx";
 import { green, panel, border } from "../styles/theme.js";
-import { PlanetZephyrosAE, CoreAscensionLogo } from "../appMedia/media.js";
+import { PlanetZephyrosAE, CoreAscensionLogo } from "../../assets/media.js";
 
 function shortAddress(address) {
   if (!address) return "";
