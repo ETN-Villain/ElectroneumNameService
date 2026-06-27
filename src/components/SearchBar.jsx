@@ -4,8 +4,7 @@ import { useCheckAvailability } from "../hooks/useCheckAvailability.js";
 import NeonButton from "./NeonButton.jsx";
 
 export default function SearchBar({ wallet, onNameSelected = null, onNamespaceFlow = null }) {
-  const [activeTab, setActiveTab] = useState("name");
-  const [view, setView] = useState("main"); // "main", "name", "namespace"
+  const [view, setView] = useState("main");
   const [nameInput, setNameInput] = useState("");
   const [registrationType, setRegistrationType] = useState("basic");
   const [projectInput, setProjectInput] = useState("");
@@ -14,17 +13,17 @@ export default function SearchBar({ wallet, onNameSelected = null, onNamespaceFl
 
   const { checkBasicAvailability, checkProjectAvailability } = useCheckAvailability();
 
+  // Monitor wallet changes
+  useEffect(() => {
+    console.log("SearchBar - wallet.isConnected:", wallet.isConnected);
+  }, [wallet.isConnected]);
+
   // Debounced availability check
   useEffect(() => {
     if (!nameInput || nameInput.length < 1) {
       setAvailability(null);
       return;
     }
-
-    useEffect(() => {
-  // Force re-render when wallet connection changes
-  console.log("Wallet connected:", wallet.isConnected, wallet.account);
-}, [wallet.isConnected, wallet.account]);
 
     const timer = setTimeout(async () => {
       setCheckingDebounce(true);
