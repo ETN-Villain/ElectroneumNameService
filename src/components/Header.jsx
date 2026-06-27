@@ -170,7 +170,7 @@ export default function Header({
       fontSize: isMobile ? 11 : 13,
       fontWeight: 700,
       letterSpacing: 1.2,
-      color: "#18bb1a",
+      color: "#1b9cca",
       textTransform: "uppercase",
       textShadow: "0 0 16px rgba(24,187,26,0.4), 0 0 32px rgba(24,187,26,0.15)",
       animation: "glow 2s ease-in-out infinite",
