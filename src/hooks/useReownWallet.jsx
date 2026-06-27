@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { ethers } from "ethers";
+import { useEffect, useState } from "react";
 import {
   createAppKit,
   useAppKit,
@@ -69,19 +70,14 @@ export const appKitModal = createAppKit({
 const readOnlyProvider = new ethers.JsonRpcProvider(RPC_URL);
 
 export function useReownWallet() {
+  const [, setForceUpdate] = useState(0);
+  
   const { open } = useAppKit();
   const { disconnect } = useDisconnect();
   const { switchNetwork, caipNetwork } = useAppKitNetwork();
-
-  const { address, isConnected, status } = useAppKitAccount({
-    namespace: "eip155",
-  });
-
+  const { address, isConnected, status } = useAppKitAccount();
   const { walletProvider } = useAppKitProvider("eip155");
 
-  // Signing provider — wraps the wallet's transport, used only for
-  // transactions. May report chain 999 on Android WalletConnect; that's
-  // fine because we never use it for reads.
   const signingProvider = useMemo(() => {
     if (!isConnected || !walletProvider) return null;
     try {
@@ -92,14 +88,24 @@ export function useReownWallet() {
     }
   }, [isConnected, walletProvider]);
 
+  // Force re-render on connection changes
+  useEffect(() => {
+    if (appKitModal?.subscribeConnectedWallet) {
+      const unsubscribe = appKitModal.subscribeConnectedWallet(() => {
+        setForceUpdate(prev => prev + 1);
+      });
+      return () => unsubscribe?.();
+    }
+  }, []);
+
   const connectWallet = useCallback(async () => {
     try {
-      await open({ view: "Connect", namespace: "eip155" });
+      await open({ view: "Connect" });
     } catch (err) {
       console.error("Connect wallet failed:", err);
     }
   }, [open]);
-
+  
   const disconnectWallet = useCallback(async () => {
     try {
       await disconnect();
