@@ -1,6 +1,7 @@
 import express from "express";
 import { generateNftImage } from "../utils/imageGenerator.js";
 import { uploadNftToR2 } from "../utils/R2Upload.js";
+import { setNodeImageOnChain } from "../utils/setNodeImage.js";
 
 const router = express.Router();
 
@@ -14,8 +15,6 @@ router.post("/generate-nft", async (req, res) => {
   try {
     const { buffer, filename } = await generateNftImage(fullName, nodeHex);
 
-    // Respond to the frontend immediately with the image as a data URL,
-    // so the user sees it right away without waiting on the R2 upload.
     const base64 = buffer.toString("base64");
     const dataUrl = `data:image/png;base64,${base64}`;
 
@@ -25,12 +24,12 @@ router.post("/generate-nft", async (req, res) => {
       filename,
     });
 
-    // Fire-and-forget: upload to R2 AFTER responding. Errors here are
-    // logged but don't affect the user-facing response, since it already
-    // went out above.
-    uploadNftToR2(buffer, filename).catch((err) => {
-      console.error(`R2 upload failed for ${filename}:`, err.message);
-    });
+    // Fire-and-forget: upload to R2, then link on-chain once upload succeeds.
+    uploadNftToR2(buffer, filename)
+      .then((publicUrl) => setNodeImageOnChain(nodeHex, publicUrl))
+      .catch((err) => {
+        console.error(`R2 upload or on-chain link failed for ${filename}:`, err.message);
+      });
 
   } catch (err) {
     console.error("NFT generation failed:", err);

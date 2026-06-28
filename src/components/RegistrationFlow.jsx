@@ -11,14 +11,15 @@ export default function RegistrationFlow({
   onBack = null, 
   onSuccess = null 
 }) {
-  const [lifetime, setLifetime] = useState(false);
-  const [priceYear, setPriceYear] = useState(null);
-  const [priceLifetime, setPriceLifetime] = useState(null);
-  const [priceLoading, setPriceLoading] = useState(true);
-  const [txLoading, setTxLoading] = useState(false);
-  const [step, setStep] = useState("choose");
-  const [txHash, setTxHash] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
+const [lifetime, setLifetime] = useState(false);
+const [priceYear, setPriceYear] = useState(null);
+const [priceLifetime, setPriceLifetime] = useState(null);
+const [priceLoading, setPriceLoading] = useState(true);
+const [txLoading, setTxLoading] = useState(false);
+const [step, setStep] = useState("choose");
+const [txHash, setTxHash] = useState(null);
+const [errorMsg, setErrorMsg] = useState(null);
+const [nftImage, setNftImage] = useState(null);
 
   const { getPrice, registerBasicName, registerProjectName } = useRegistration();
 
@@ -44,47 +45,59 @@ export default function RegistrationFlow({
     })();
   }, [nameData.type, getPrice]);
 
-  const handleRegister = async () => {
-    if (!wallet.isConnected) {
-      setErrorMsg("Wallet not connected");
-      return;
+const handleRegister = async () => {
+  if (!wallet.isConnected) {
+    setErrorMsg("Wallet not connected");
+    return;
+  }
+
+  setTxLoading(true);
+  setErrorMsg(null);
+
+  try {
+    const signer = await wallet.getSigner();
+
+    let result;
+    if (nameData.type === "basic") {
+      result = await registerBasicName(nameData.name, signer, lifetime, null);
+    } else {
+      result = await registerProjectName(nameData.name, nameData.project, signer, lifetime, null);
     }
 
-    setTxLoading(true);
-    setErrorMsg(null);
+    setTxHash(result.txHash);
+    setStep("success");
+    onSuccess?.(result);
 
-    try {
-      const signer = await wallet.getSigner();
-
-      let result;
-      if (nameData.type === "basic") {
-        result = await registerBasicName(
-          nameData.name,
-          signer,
-          lifetime,
-          null
-        );
-      } else {
-        result = await registerProjectName(
-          nameData.name,
-          nameData.project,
-          signer,
-          lifetime,
-          null
-        );
-      }
-
-      setTxHash(result.txHash);
-      setStep("success");
-      onSuccess?.(result);
-    } catch (err) {
-      console.error("Registration error:", err);
-      setErrorMsg(err?.reason || err?.message || "Registration failed");
-      setStep("error");
-    } finally {
-      setTxLoading(false);
+    // Generate + store the NFT image now that we have the real node
+    if (result.node) {
+      generateNftAndLink(result.name, result.node);
+    } else {
+      console.warn("No node found in registration receipt — skipping NFT generation");
     }
-  };
+  } catch (err) {
+    console.error("Registration error:", err);
+    setErrorMsg(err?.reason || err?.message || "Registration failed");
+    setStep("error");
+  } finally {
+    setTxLoading(false);
+  }
+};
+
+const generateNftAndLink = async (fullName, nodeHex) => {
+  try {
+    const res = await fetch("https://electroneumnameservice.onrender.com/api/generate-nft", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fullName, nodeHex }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setNftImage(data.image); // new state — add useState("nftImage", null)
+    }
+  } catch (err) {
+    console.error("NFT generation request failed:", err);
+  }
+};
 
   const priceYearEth = priceYear ? parseFloat(ethers.formatEther(priceYear)).toFixed(2) : "0.00";
   const priceLifetimeEth = priceLifetime ? parseFloat(ethers.formatEther(priceLifetime)).toFixed(2) : "0.00";
@@ -303,58 +316,97 @@ export default function RegistrationFlow({
         </>
       )}
 
-      {step === "success" && (
-        <div style={{ textAlign: "center", padding: "40px 20px" }}>
-          <div style={{
-            fontSize: 48,
-            marginBottom: 16,
-          }}>
-            ✓
-          </div>
-          <h2 style={{
-            fontSize: 28,
-            fontWeight: 900,
-            color: green,
-            marginBottom: 8,
-          }}>
-            Name Registered!
-          </h2>
-          <p style={{
-            fontSize: 13,
-            color: mutedLight,
-            marginBottom: 24,
-            lineHeight: 1.6,
-          }}>
-            <strong>{displayName}</strong> is now yours.
-            <br />
-            Your NFT is being generated and will appear soon.
-          </p>
-          {txHash && (
-            <a
-              href={`https://blockexplorer.electroneum.com/tx/${txHash}`}
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                display: "inline-block",
-                fontSize: 12,
-                color: green,
-                textDecoration: "none",
-                marginBottom: 24,
-                borderBottom: `1px solid ${green}`,
-              }}
-            >
-              View Transaction →
-            </a>
-          )}
-          <NeonButton
-            variant="green"
-            onClick={() => window.location.reload()}
-            style={{ width: "100%" }}
-          >
-            Register Another Name
-          </NeonButton>
-        </div>
+{step === "success" && (
+  <div style={{ textAlign: "center", padding: "40px 20px" }}>
+    <div style={{
+      fontSize: 48,
+      marginBottom: 16,
+    }}>
+      ✓
+    </div>
+    <h2 style={{
+      fontSize: 28,
+      fontWeight: 900,
+      color: green,
+      marginBottom: 8,
+    }}>
+      Name Registered!
+    </h2>
+
+    {nftImage ? (
+      <img
+        src={nftImage}
+        alt={displayName}
+        style={{
+          width: "100%",
+          maxWidth: 280,
+          borderRadius: 14,
+          border: `1px solid ${border}`,
+          boxShadow: `0 0 20px ${greenGlow}`,
+          marginBottom: 20,
+        }}
+      />
+    ) : (
+      <div style={{
+        width: "100%",
+        maxWidth: 280,
+        aspectRatio: "1 / 1",
+        margin: "0 auto 20px",
+        borderRadius: 14,
+        border: `1px solid ${border}`,
+        background: panel2,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 12,
+        color: muted,
+      }}>
+        Generating artwork...
+      </div>
+    )}
+
+    <p style={{
+      fontSize: 13,
+      color: mutedLight,
+      marginBottom: 24,
+      lineHeight: 1.6,
+    }}>
+      <strong>{displayName}</strong> is now yours.
+      {!nftImage && (
+        <>
+          <br />
+          Your NFT is being generated and will appear shortly.
+        </>
       )}
+    </p>
+
+{txHash && (
+  <a
+    href={`https://blockexplorer.electroneum.com/tx/${txHash}`}
+    target="_blank"
+    rel="noreferrer"
+    style={{
+      display: "inline-block",
+      fontSize: 12,
+      color: green,
+      textDecoration: "none",
+      marginBottom: 24,
+      borderBottom: `1px solid ${green}`,
+    }}
+  >
+    View Transaction →
+  </a>
+)}
+
+    <NeonButton
+      variant="green"
+      onClick={() => window.location.reload()}
+      style={{ width: "100%" }}
+    >
+      Register Another Name
+    </NeonButton>
+  </div>
+)}
 
       {step === "error" && (
         <div style={{ textAlign: "center", padding: "40px 20px" }}>

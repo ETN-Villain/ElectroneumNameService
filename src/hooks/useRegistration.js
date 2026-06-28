@@ -10,6 +10,7 @@ const REGISTRAR_ABI = [
   "function getProjectNameLifetimePrice() view returns (uint256)",
   "function registerBasic(string calldata name, address resolver, bool lifetime) external payable",
   "function registerProject(string calldata name, string calldata project, address resolver, bool lifetime) external payable",
+  "event NameRegistered(bytes32 indexed node, string name, string tld, address indexed registrant, bool lifetime, uint256 expiresAt)",
 ];
 
 export function useRegistration() {
@@ -41,42 +42,52 @@ export function useRegistration() {
   }, []);
 
   // Register a basic name
-  const registerBasicName = useCallback(async (name, signer, lifetime, resolver = null) => {
-    setLoading(true);
-    setError(null);
+const registerBasicName = useCallback(async (name, signer, lifetime, resolver = null) => {
+  setLoading(true);
+  setError(null);
 
-    try {
-      const registrar = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, signer);
-      
-      // Get the price for this name
-      const price = await getPrice("basic", lifetime);
+  try {
+    const registrar = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, signer);
+    const price = await getPrice("basic", lifetime);
 
-      // Call registerBasic with the price as msg.value
-      const tx = await registrar.registerBasic(
-        name,
-        resolver || ethers.ZeroAddress,
-        lifetime,
-        { value: price }
-      );
+    const tx = await registrar.registerBasic(
+      name,
+      resolver || ethers.ZeroAddress,
+      lifetime,
+      { value: price }
+    );
 
-      // Wait for confirmation
-      const receipt = await tx.wait();
+    const receipt = await tx.wait();
+    if (!receipt) throw new Error("Registration failed");
 
-      if (!receipt) throw new Error("Registration failed");
-
-      return {
-        success: true,
-        txHash: tx.hash,
-        name: `${name}.etn`,
-      };
-    } catch (err) {
-      console.error("Registration failed:", err);
-      setError(err?.reason || err?.message || "Registration failed");
-      throw err;
-    } finally {
-      setLoading(false);
+    // Extract node from the NameRegistered event
+    let node = null;
+    for (const log of receipt.logs) {
+      try {
+        const parsed = registrar.interface.parseLog(log);
+        if (parsed?.name === "NameRegistered") {
+          node = parsed.args.node;
+          break;
+        }
+      } catch {
+        // not this event, skip
+      }
     }
-  }, [getPrice]);
+
+    return {
+      success: true,
+      txHash: tx.hash,
+      name: `${name}.etn`,
+      node, // bytes32 hex string, e.g. "0xabc123..."
+    };
+  } catch (err) {
+    console.error("Registration failed:", err);
+    setError(err?.reason || err?.message || "Registration failed");
+    throw err;
+  } finally {
+    setLoading(false);
+  }
+}, [getPrice]);
 
   // Register a project name
   const registerProjectName = useCallback(async (name, project, signer, lifetime, resolver = null) => {
@@ -103,10 +114,25 @@ export function useRegistration() {
 
       if (!receipt) throw new Error("Registration failed");
 
+    // Extract node from the NameRegistered event
+    let node = null;
+    for (const log of receipt.logs) {
+      try {
+        const parsed = registrar.interface.parseLog(log);
+        if (parsed?.name === "ProjectNameRegistered") {
+          node = parsed.args.node;
+          break;
+        }
+      } catch {
+        // not this event, skip
+      }
+    }
+
       return {
         success: true,
         txHash: tx.hash,
         name: `${name}.${project}.etn`,
+        node,
       };
     } catch (err) {
       console.error("Registration failed:", err);
