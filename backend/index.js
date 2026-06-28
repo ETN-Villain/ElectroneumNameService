@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import generateNftRouter from "./routes/generateNft.js";
+import generateNftRouter from "./utils/generateNft.js";
 
 dotenv.config();
 
