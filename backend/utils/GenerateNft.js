@@ -1,6 +1,6 @@
 import express from "express";
 import { generateNftImage } from "../utils/imageGenerator.js";
-import { uploadNftToR2 } from "../utils/r2Upload.js";
+import { uploadNftToR2 } from "../utils/R2Upload.js";
 
 const router = express.Router();
 
