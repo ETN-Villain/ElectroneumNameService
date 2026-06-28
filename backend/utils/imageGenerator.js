@@ -11,6 +11,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const STOCK_IMAGE_PATH =
   process.env.STOCK_IMAGE_PATH || "./assets/ETNNameServiceTemplate.png";
+const NAMESPACE_IMAGE_PATH =
+  process.env.NAMESPACE_IMAGE_PATH || "./assets/GoldETNNameServiceTemplate.png";
 
 const FONT_SIZE = parseInt(process.env.FONT_SIZE || "64", 10);
 const FONT_COLOR = process.env.FONT_COLOR || "#ffffff";
@@ -38,20 +40,25 @@ try {
 }
 
 let cachedStockImage = null;
+let cachedNamespaceImage = null;
 
-// --------------------------------------------------
+async function getStockImage(template = "default") {
+  if (template === "namespace") {
+    if (cachedNamespaceImage) return cachedNamespaceImage;
+    const fullPath = path.resolve(__dirname, "..", NAMESPACE_IMAGE_PATH);
+    if (!fs.existsSync(fullPath)) {
+      throw new Error(`Missing template image: ${fullPath}`);
+    }
+    cachedNamespaceImage = await loadImage(fullPath);
+    return cachedNamespaceImage;
+  }
 
-async function getStockImage() {
   if (cachedStockImage) return cachedStockImage;
-
   const fullPath = path.resolve(__dirname, "..", STOCK_IMAGE_PATH);
-
   if (!fs.existsSync(fullPath)) {
     throw new Error(`Missing template image: ${fullPath}`);
   }
-
   cachedStockImage = await loadImage(fullPath);
-
   return cachedStockImage;
 }
 
@@ -104,9 +111,9 @@ function wrapEnsName(fullName) {
 // (e.g. send to frontend, upload to R2, both).
 // --------------------------------------------------
 
-export async function generateNftImage(fullName, nodeHex) {
-  const stockImage = await getStockImage();
-
+export async function generateNftImage(fullName, nodeHex, template = "default") {
+  const stockImage = await getStockImage(template);
+  
   const canvas = createCanvas(
     stockImage.width,
     stockImage.height

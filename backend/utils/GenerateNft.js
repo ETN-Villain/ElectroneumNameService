@@ -6,15 +6,15 @@ import { setNodeImageOnChain } from "../utils/setNodeImage.js";
 const router = express.Router();
 
 router.post("/generate-nft", async (req, res) => {
-  const { fullName, nodeHex } = req.body;
+  const { fullName, nodeHex, template } = req.body;
 
   if (!fullName || !nodeHex) {
     return res.status(400).json({ error: "fullName and nodeHex are required" });
   }
 
   try {
-    const { buffer, filename } = await generateNftImage(fullName, nodeHex);
-
+    const { buffer, filename } = await generateNftImage(fullName, nodeHex, template);
+    
     const base64 = buffer.toString("base64");
     const dataUrl = `data:image/png;base64,${base64}`;
 

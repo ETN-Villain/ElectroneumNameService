@@ -6,6 +6,7 @@ const REGISTRAR_ABI = [
   "function getNamespaceYearPrice() view returns (uint256)",
   "function getNamespaceLifetimePrice() view returns (uint256)",
   "function buyProject(string calldata project, bool lifetime) external payable",
+  "event ProjectCreated(string project, bytes32 indexed projectNode, address indexed creator, bool lifetime, uint256 expiresAt)",
 ];
 
 export function useNamespace() {
@@ -28,37 +29,49 @@ export function useNamespace() {
     }
   }, []);
 
-  const buyNamespace = useCallback(async (projectName, signer, lifetime) => {
-    setLoading(true);
-    setError(null);
+const buyNamespace = useCallback(async (projectName, signer, lifetime) => {
+  setLoading(true);
+  setError(null);
 
-    try {
-      const registrar = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, signer);
+  try {
+    const registrar = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, signer);
+    const price = await getPrice(lifetime);
 
-      const price = await getPrice(lifetime);
+    const tx = await registrar.buyProject(projectName, lifetime, {
+      value: price,
+      gasLimit: 500000,
+    });
 
-const tx = await registrar.buyProject(projectName, lifetime, {
-     value: price,
-     gasLimit: 500000  // Increase this
-   });
-   
-      const receipt = await tx.wait();
+    const receipt = await tx.wait();
+    if (!receipt) throw new Error("Namespace creation failed");
 
-      if (!receipt) throw new Error("Namespace creation failed");
-
-      return {
-        success: true,
-        txHash: tx.hash,
-        namespace: `${projectName}.etn`,
-      };
-    } catch (err) {
-      console.error("Namespace creation failed:", err);
-      setError(err?.reason || err?.message || "Namespace creation failed");
-      throw err;
-    } finally {
-      setLoading(false);
+    let node = null;
+    for (const log of receipt.logs) {
+      try {
+        const parsed = registrar.interface.parseLog(log);
+        if (parsed?.name === "ProjectCreated") {
+          node = parsed.args.projectNode;
+          break;
+        }
+      } catch {
+        // not this event, skip
+      }
     }
-  }, [getPrice]);
+
+    return {
+      success: true,
+      txHash: tx.hash,
+      namespace: `${projectName}.etn`,
+      node,
+    };
+  } catch (err) {
+    console.error("Namespace creation failed:", err);
+    setError(err?.reason || err?.message || "Namespace creation failed");
+    throw err;
+  } finally {
+    setLoading(false);
+  }
+}, [getPrice]);
 
   return {
     getPrice,

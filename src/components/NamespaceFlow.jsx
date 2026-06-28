@@ -19,6 +19,7 @@ export default function NamespaceFlow({
   const [step, setStep] = useState("choose");
   const [txHash, setTxHash] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [nftImage, setNftImage] = useState(null);
 
   const { getPrice, buyNamespace } = useNamespace();
 
@@ -40,35 +41,57 @@ export default function NamespaceFlow({
     })();
   }, [getPrice]);
 
-  const handleBuy = async () => {
-    if (!wallet.isConnected) {
-      setErrorMsg("Wallet not connected");
-      return;
+const handleBuy = async () => {
+  if (!wallet.isConnected) {
+    setErrorMsg("Wallet not connected");
+    return;
+  }
+
+  if (!namespaceInput || namespaceInput.length < 1) {
+    setErrorMsg("Namespace name required");
+    return;
+  }
+
+  setTxLoading(true);
+  setErrorMsg(null);
+
+  try {
+    const signer = await wallet.getSigner();
+    const result = await buyNamespace(namespaceInput, signer, lifetime);
+
+    setTxHash(result.txHash);
+    setStep("success");
+    onSuccess?.(result);
+
+    if (result.node) {
+      generateNamespaceNft(`${namespaceInput}.etn`, result.node);
+    } else {
+      console.warn("No node found in namespace receipt — skipping NFT generation");
     }
+  } catch (err) {
+    console.error("Namespace creation error:", err);
+    setErrorMsg(err?.reason || err?.message || "Creation failed");
+    setStep("error");
+  } finally {
+    setTxLoading(false);
+  }
+};
 
-    if (!namespaceInput || namespaceInput.length < 1) {
-      setErrorMsg("Namespace name required");
-      return;
+const generateNamespaceNft = async (fullName, nodeHex) => {
+  try {
+    const res = await fetch("https://electroneumnameservice.onrender.com/api/generate-nft", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fullName, nodeHex, template: "namespace" }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setNftImage(data.image);
     }
-
-    setTxLoading(true);
-    setErrorMsg(null);
-
-    try {
-      const signer = await wallet.getSigner();
-      const result = await buyNamespace(namespaceInput, signer, lifetime);
-
-      setTxHash(result.txHash);
-      setStep("success");
-      onSuccess?.(result);
-    } catch (err) {
-      console.error("Namespace creation error:", err);
-      setErrorMsg(err?.reason || err?.message || "Creation failed");
-      setStep("error");
-    } finally {
-      setTxLoading(false);
-    }
-  };
+  } catch (err) {
+    console.error("NFT generation request failed:", err);
+  }
+};
 
   const priceYearEth = priceYear ? parseFloat(ethers.formatEther(priceYear)).toFixed(2) : "0.00";
   const priceLifetimeEth = priceLifetime ? parseFloat(ethers.formatEther(priceLifetime)).toFixed(2) : "0.00";
