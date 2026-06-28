@@ -1,4 +1,4 @@
-import { generateNftImage } from "../src/imageGenerator.js";
+import { generateNftImage } from "./imageGenerator.js";
 
 async function run() {
   try {

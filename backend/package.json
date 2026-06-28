@@ -1,0 +1,21 @@
+{
+  "name": "etn-name-service-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Backend for Planet Zephyros - NFT image generation and R2 upload",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "canvas": "^2.11.2",
+    "@aws-sdk/client-s3": "^3.600.0",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
