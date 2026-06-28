@@ -1,5 +1,5 @@
 import React from "react";
-import { PlanetZephyrosLogo } from "../../assets/media.js";
+import { PlanetZephyrosLogo } from "../../backend/assets/media.js";
 import { muted, mutedLight } from "../styles/theme.js";
 
 export default function Footer() {

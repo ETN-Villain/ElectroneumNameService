@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // --------------------------------------------------
 
 const STOCK_IMAGE_PATH =
-  process.env.STOCK_IMAGE_PATH || "./assets/ETNNameServiceTemplate.png";
+  process.env.STOCK_IMAGE_PATH || "../assets/ETNNameServiceTemplate.png";
 
 const FONT_SIZE = parseInt(process.env.FONT_SIZE || "64", 10);
 const FONT_COLOR = process.env.FONT_COLOR || "#ffffff";

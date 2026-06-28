@@ -3,7 +3,7 @@ import { Wallet } from "lucide-react";
 
 import NeonButton from "./NeonButton.jsx";
 import { green, panel, border } from "../styles/theme.js";
-import { PlanetZephyrosLogo, PlanetZephyrosText, electroneumnameservicetext, SimplifyYourWallet } from "../../assets/media.js";
+import { PlanetZephyrosLogo, PlanetZephyrosText, electroneumnameservicetext, SimplifyYourWallet } from "../../backend/assets/media.js";
 
 function shortAddress(address) {
   if (!address) return "";
