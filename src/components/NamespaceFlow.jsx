@@ -328,53 +328,99 @@ const generateNamespaceNft = async (fullName, nodeHex) => {
         </>
       )}
 
-      {step === "success" && (
-        <div style={{ textAlign: "center", padding: "40px 20px" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>✓</div>
-          <h2 style={{
-            fontSize: 28,
-            fontWeight: 900,
-            color: green,
-            marginBottom: 8,
-          }}>
-            Subdomain Created!
-          </h2>
-          <p style={{
-            fontSize: 13,
-            color: mutedLight,
-            marginBottom: 24,
-            lineHeight: 1.6,
-          }}>
-            <strong>{namespaceInput}.etn</strong> is now your subdomain.
-            <br />
-            You can now mint names under it using Create Name | Project Name
-          </p>
-          {txHash && (
-            <a
-              href={`https://blockexplorer.electroneum.com/tx/${txHash}`}
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                display: "inline-block",
-                fontSize: 12,
-                color: green,
-                textDecoration: "none",
-                marginBottom: 24,
-                borderBottom: `1px solid ${green}`,
-              }}
-            >
-              View Transaction →
-            </a>
-          )}
-          <NeonButton
-            variant="green"
-            onClick={() => window.location.reload()}
-            style={{ width: "100%" }}
-          >
-            Create Another Subdomain
-          </NeonButton>
-        </div>
+{step === "success" && (
+  <div style={{ textAlign: "center", padding: "40px 20px" }}>
+    <div style={{ fontSize: 48, marginBottom: 16 }}>✓</div>
+    <h2 style={{
+      fontSize: 28,
+      fontWeight: 900,
+      color: green,
+      marginBottom: 8,
+    }}>
+      Subdomain Created!
+    </h2>
+
+    {nftImage ? (
+      <img
+        src={nftImage}
+        alt={`${namespaceInput}.etn`}
+        style={{
+          width: "100%",
+          maxWidth: 280,
+          borderRadius: 14,
+          border: `1px solid ${border}`,
+          boxShadow: `0 0 20px ${greenGlow}`,
+          marginBottom: 20,
+        }}
+      />
+    ) : (
+      <div style={{
+        width: "100%",
+        maxWidth: 280,
+        aspectRatio: "1 / 1",
+        margin: "0 auto 20px",
+        borderRadius: 14,
+        border: `1px solid ${border}`,
+        background: panel2,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 12,
+        color: muted,
+      }}>
+        Generating artwork...
+      </div>
+    )}
+
+    <p style={{
+      fontSize: 13,
+      color: mutedLight,
+      marginBottom: 24,
+      lineHeight: 1.6,
+    }}>
+      <strong>{namespaceInput}.etn</strong> is now your subdomain.
+      {nftImage ? (
+        <>
+          <br />
+          You can now mint names under it using Create Name | Project Name
+        </>
+      ) : (
+        <>
+          <br />
+          Your NFT is being generated and will appear shortly.
+          <br />
+          You can now mint names under it using Create Name | Project Name
+        </>
       )}
+    </p>
+
+    {txHash && (
+    <a  
+        href={`https://blockexplorer.electroneum.com/tx/${txHash}`}
+        target="_blank"
+        rel="noreferrer"
+        style={{
+          display: "inline-block",
+          fontSize: 12,
+          color: green,
+          textDecoration: "none",
+          marginBottom: 24,
+          borderBottom: `1px solid ${green}`,
+        }}
+      >
+        View Transaction →
+      </a>
+    )}
+
+    <NeonButton
+      variant="green"
+      onClick={() => window.location.reload()}
+      style={{ width: "100%" }}
+    >
+      Create Another Subdomain
+    </NeonButton>
+  </div>
+)}
 
       {step === "error" && (
         <div style={{ textAlign: "center", padding: "40px 20px" }}>
