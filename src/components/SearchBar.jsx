@@ -11,42 +11,60 @@ export default function SearchBar({ wallet, onNameSelected = null, onNamespaceFl
   const [projectInput, setProjectInput] = useState("");
   const [availability, setAvailability] = useState(null);
   const [checkingDebounce, setCheckingDebounce] = useState(false);
+  const [namespaceValid, setNamespaceValid] = useState(null);
 
-  const { checkBasicAvailability, checkProjectAvailability } = useCheckAvailability();
+  const { checkBasicAvailability, checkProjectAvailability, checkNamespaceExists } = useCheckAvailability();
 
   // Monitor wallet changes
   useEffect(() => {
     console.log("SearchBar - wallet.isConnected:", wallet.isConnected);
   }, [wallet.isConnected]);
 
-  // Debounced availability check
-  useEffect(() => {
-    if (!nameInput || nameInput.length < 1) {
-      setAvailability(null);
-      return;
-    }
+// Debounced availability check
+useEffect(() => {
+  if (!nameInput || nameInput.length < 1) {
+    setAvailability(null);
+    return;
+  }
 
-    const timer = setTimeout(async () => {
-      setCheckingDebounce(true);
-      try {
-        if (registrationType === "basic") {
-          const isAvailable = await checkBasicAvailability(nameInput);
+  const timer = setTimeout(async () => {
+    setCheckingDebounce(true);
+    try {
+      if (registrationType === "basic") {
+        const isAvailable = await checkBasicAvailability(nameInput);
+        setAvailability(isAvailable);
+      } else {
+        if (projectInput.length > 0) {
+          const isAvailable = await checkProjectAvailability(nameInput, projectInput);
           setAvailability(isAvailable);
-        } else {
-          if (projectInput.length > 0) {
-            const isAvailable = await checkProjectAvailability(nameInput, projectInput);
-            setAvailability(isAvailable);
-          }
         }
-      } catch (err) {
-        console.error("Availability check error:", err);
-        setAvailability(null);
       }
-      setCheckingDebounce(false);
-    }, 500);
+    } catch (err) {
+      console.error("Availability check error:", err);
+      setAvailability(null);
+    }
+    setCheckingDebounce(false);
+  }, 500);
 
-    return () => clearTimeout(timer);
-  }, [nameInput, registrationType, projectInput, checkBasicAvailability, checkProjectAvailability]);
+  return () => clearTimeout(timer);
+}, [nameInput, registrationType, projectInput, checkBasicAvailability, checkProjectAvailability]);
+
+// Debounced namespace existence check
+useEffect(() => {
+  if (registrationType !== "project" || !projectInput) {
+    setNamespaceValid(null);
+    return;
+  }
+
+  const timer = setTimeout(async () => {
+    setNamespaceChecking(true);
+    const exists = await checkNamespaceExists(projectInput);
+    setNamespaceValid(exists);
+    setNamespaceChecking(false);
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [projectInput, registrationType, checkNamespaceExists]);
 
   const displayName = registrationType === "basic"
     ? `${nameInput}.etn`
@@ -224,35 +242,68 @@ const handleCreateName = useCallback(() => {
               }}
             />
 
-            {registrationType === "project" && (
-              <input
-                type="text"
-                placeholder="project-namespace"
-                value={projectInput}
-                onChange={(e) => setProjectInput(e.target.value.toLowerCase().trim())}
-                style={{
-                  width: "100%",
-                  padding: "14px 16px",
-                  borderRadius: 12,
-                  border: `1px solid ${border}`,
-                  background: panel2,
-                  color: "#fff",
-                  fontSize: 16,
-                  fontWeight: 600,
-                  boxSizing: "border-box",
-                  outline: "none",
-                  marginBottom: 12,
-                }}
-                onFocus={(e) => {
-                  e.currentTarget.style.borderColor = green;
-                  e.currentTarget.style.boxShadow = `0 0 12px ${greenGlow}`;
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = border;
-                  e.currentTarget.style.boxShadow = "none";
-                }}
-              />
-            )}
+{registrationType === "project" && (
+  <>
+    <input
+      type="text"
+      placeholder="project-namespace"
+      value={projectInput}
+      onChange={(e) => setProjectInput(e.target.value.toLowerCase().trim())}
+      style={{
+        width: "100%",
+        padding: "14px 16px",
+        borderRadius: 12,
+        border: `1px solid ${
+          projectInput.length === 0
+            ? border
+            : namespaceValid === null
+            ? border
+            : namespaceValid
+            ? green
+            : error
+        }`,
+        background: panel2,
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: 600,
+        boxSizing: "border-box",
+        outline: "none",
+        marginBottom: 8,
+        boxShadow:
+          projectInput.length === 0 || namespaceValid === null
+            ? "none"
+            : `0 0 12px ${namespaceValid ? greenGlow : "rgba(255,107,107,0.25)"}`,
+      }}
+      onFocus={(e) => {
+        if (namespaceValid === null) {
+          e.currentTarget.style.borderColor = green;
+          e.currentTarget.style.boxShadow = `0 0 12px ${greenGlow}`;
+        }
+      }}
+      onBlur={(e) => {
+        if (namespaceValid === null) {
+          e.currentTarget.style.borderColor = border;
+          e.currentTarget.style.boxShadow = "none";
+        }
+      }}
+    />
+    {projectInput && !namespaceChecking && namespaceValid === false && (
+      <div style={{ fontSize: 12, color: error, marginBottom: 12 }}>
+        ✗ "{projectInput}.etn" doesn't exist or has expired
+      </div>
+    )}
+    {projectInput && !namespaceChecking && namespaceValid === true && (
+      <div style={{ fontSize: 12, color: green, marginBottom: 12 }}>
+        ✓ "{projectInput}.etn" found
+      </div>
+    )}
+    {namespaceChecking && (
+      <div style={{ fontSize: 12, color: muted, marginBottom: 12 }}>
+        Checking...
+      </div>
+    )}
+  </>
+)}
           </div>
 
           {/* Display name preview */}
