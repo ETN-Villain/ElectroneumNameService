@@ -12,7 +12,7 @@ export default function SearchBar({ wallet, onNameSelected = null, onNamespaceFl
   const [availability, setAvailability] = useState(null);
   const [checkingDebounce, setCheckingDebounce] = useState(false);
   const [namespaceValid, setNamespaceValid] = useState(null);
-
+  const [namespaceChecking, setNamespaceChecking] = useState(false);
   const { checkBasicAvailability, checkProjectAvailability, checkNamespaceExists } = useCheckAvailability();
 
   // Monitor wallet changes
