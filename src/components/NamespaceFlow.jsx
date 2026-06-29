@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { green, greenGlow, muted, mutedLight, error, panel2, border, orange } from "../styles/theme.js";
 import { useNamespace } from "../hooks/useNamespace.js";
 import NeonButton from "./NeonButton.jsx";
+import { containsBlockedWord } from "../utils/obscenity.js";
 
 export default function NamespaceFlow({
   wallet,
@@ -49,6 +50,11 @@ const handleBuy = async () => {
 
   if (!namespaceInput || namespaceInput.length < 1) {
     setErrorMsg("Namespace name required");
+    return;
+  }
+
+  if (containsBlockedWord(namespaceInput)) {
+    setErrorMsg("This name isn't allowed");
     return;
   }
 

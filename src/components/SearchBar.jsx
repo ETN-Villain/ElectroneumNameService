@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { green, greenGlow, muted, mutedLight, error, panel2, border } from "../styles/theme.js";
 import { useCheckAvailability } from "../hooks/useCheckAvailability.js";
 import NeonButton from "./NeonButton.jsx";
+import { containsBlockedWord } from "../utils/obscenity.js";
 
 export default function SearchBar({ wallet, onNameSelected = null, onNamespaceFlow = null }) {
   const [view, setView] = useState("main");
@@ -14,6 +15,7 @@ export default function SearchBar({ wallet, onNameSelected = null, onNamespaceFl
   const [namespaceValid, setNamespaceValid] = useState(null);
   const [namespaceChecking, setNamespaceChecking] = useState(false);
   const { checkBasicAvailability, checkProjectAvailability, checkNamespaceExists } = useCheckAvailability();
+  const [blockedWord, setBlockedWord] = useState(false);
 
   // Monitor wallet changes
   useEffect(() => {
@@ -24,8 +26,16 @@ export default function SearchBar({ wallet, onNameSelected = null, onNamespaceFl
 useEffect(() => {
   if (!nameInput || nameInput.length < 1) {
     setAvailability(null);
+    setBlockedWord(false);
     return;
   }
+
+  if (containsBlockedWord(nameInput) || (registrationType === "project" && containsBlockedWord(projectInput))) {
+    setBlockedWord(true);
+    setAvailability(false);
+    return;
+  }
+  setBlockedWord(false);
 
   const timer = setTimeout(async () => {
     setCheckingDebounce(true);
@@ -70,7 +80,7 @@ useEffect(() => {
     ? `${nameInput}.etn`
     : `${nameInput}.${projectInput}.etn`;
 
-const canProceed = wallet?.isConnected && availability === true &&
+const canProceed = wallet?.isConnected && availability === true && !blockedWord &&
   (registrationType === "basic" || namespaceValid === true);
 
   const handleContinue = () => {
@@ -337,25 +347,33 @@ const handleCreateName = useCallback(() => {
   <div style={{
     padding: 14,
     borderRadius: 10,
-    background: (registrationType === "project" && namespaceValid === false)
+    background: blockedWord
+      ? `rgba(255,107,107,0.1)`
+      : (registrationType === "project" && namespaceValid === false)
       ? `rgba(255,107,107,0.1)`
       : availability
       ? `rgba(24,187,26,0.1)`
       : `rgba(255,107,107,0.1)`,
     border: `1px solid ${
-      (registrationType === "project" && namespaceValid === false)
+      blockedWord
+        ? error
+        : (registrationType === "project" && namespaceValid === false)
         ? error
         : availability ? green : error
     }`,
     marginBottom: 16,
     fontSize: 13,
-    color: (registrationType === "project" && namespaceValid === false)
+    color: blockedWord
+      ? error
+      : (registrationType === "project" && namespaceValid === false)
       ? error
       : availability ? green : error,
     fontWeight: 600,
     textAlign: "center",
   }}>
-    {registrationType === "project" && namespaceValid === false
+    {blockedWord
+      ? "✗ This name isn't allowed"
+      : registrationType === "project" && namespaceValid === false
       ? "✗ Not a registered subdomain"
       : availability
       ? "✓ Available — Ready to register"
