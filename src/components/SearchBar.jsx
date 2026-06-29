@@ -70,8 +70,9 @@ useEffect(() => {
     ? `${nameInput}.etn`
     : `${nameInput}.${projectInput}.etn`;
 
-  const canProceed = wallet?.isConnected && availability === true;
-
+const canProceed = wallet?.isConnected && availability === true &&
+  (registrationType === "basic" || namespaceValid === true);
+  
   const handleContinue = () => {
     if (!canProceed) return;
     onNameSelected?.({
@@ -325,24 +326,36 @@ const handleCreateName = useCallback(() => {
             </div>
           )}
 
-          {/* Availability status */}
-          {availability !== null && !checkingDebounce && (
-            <div style={{
-              padding: 14,
-              borderRadius: 10,
-              background: availability
-                ? `rgba(24,187,26,0.1)`
-                : `rgba(255,107,107,0.1)`,
-              border: `1px solid ${availability ? green : error}`,
-              marginBottom: 16,
-              fontSize: 13,
-              color: availability ? green : error,
-              fontWeight: 600,
-              textAlign: "center",
-            }}>
-              {availability ? "✓ Available — Ready to register" : "✗ Taken or expired"}
-            </div>
-          )}
+{/* Availability status */}
+{availability !== null && !checkingDebounce && (
+  <div style={{
+    padding: 14,
+    borderRadius: 10,
+    background: (registrationType === "project" && namespaceValid === false)
+      ? `rgba(255,107,107,0.1)`
+      : availability
+      ? `rgba(24,187,26,0.1)`
+      : `rgba(255,107,107,0.1)`,
+    border: `1px solid ${
+      (registrationType === "project" && namespaceValid === false)
+        ? error
+        : availability ? green : error
+    }`,
+    marginBottom: 16,
+    fontSize: 13,
+    color: (registrationType === "project" && namespaceValid === false)
+      ? error
+      : availability ? green : error,
+    fontWeight: 600,
+    textAlign: "center",
+  }}>
+    {registrationType === "project" && namespaceValid === false
+      ? "✗ Not a registered subdomain"
+      : availability
+      ? "✓ Available — Ready to register"
+      : "✗ Taken or expired"}
+  </div>
+)}
 
           {/* Wallet connection status */}
           {!wallet?.isConnected && (
