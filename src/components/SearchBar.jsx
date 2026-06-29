@@ -72,7 +72,7 @@ useEffect(() => {
 
 const canProceed = wallet?.isConnected && availability === true &&
   (registrationType === "basic" || namespaceValid === true);
-  
+
   const handleContinue = () => {
     if (!canProceed) return;
     onNameSelected?.({
@@ -307,24 +307,30 @@ const handleCreateName = useCallback(() => {
 )}
           </div>
 
-          {/* Display name preview */}
-          {nameInput && (
-            <div style={{
-              padding: 14,
-              borderRadius: 10,
-              background: panel2,
-              border: `1px solid ${border}`,
-              marginBottom: 16,
-              fontSize: 12,
-              color: mutedLight,
-              textAlign: "center",
-            }}>
-              {checkingDebounce && "Checking..."}
-              <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginTop: checkingDebounce ? 4 : 0, fontFamily: "monospace" }}>
-                {displayName}
-              </div>
-            </div>
-          )}
+{/* Display name preview */}
+{nameInput && (
+  <div style={{
+    padding: 14,
+    borderRadius: 10,
+    background: panel2,
+    border: `1px solid ${border}`,
+    marginBottom: 16,
+    fontSize: 12,
+    color: mutedLight,
+    textAlign: "center",
+  }}>
+    {checkingDebounce && "Checking..."}
+    <div style={{
+      fontSize: 18,
+      fontWeight: 700,
+      color: "#fff",
+      marginTop: checkingDebounce ? 4 : 0,
+      fontFamily: '"Orbitron", sans-serif',
+    }}>
+      {displayName}
+    </div>
+  </div>
+)}
 
 {/* Availability status */}
 {availability !== null && !checkingDebounce && (

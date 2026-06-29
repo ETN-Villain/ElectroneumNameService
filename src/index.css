@@ -53,3 +53,11 @@ w3m-connect-button {
   --w3m-accent-sidetab: #18bb1a;
   --w3m-z-index: 1000;
 }
+
+@font-face {
+  font-family: "Orbitron";
+  src: url("/fonts/Orbitron-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
