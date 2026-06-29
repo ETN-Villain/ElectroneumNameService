@@ -1,16 +1,21 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
-const r2 = new S3Client({
-  region: "auto",
-  endpoint: process.env.R2_ENDPOINT,
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
-  },
-});
+let cachedClient = null;
 
-const BUCKET_NAME = process.env.R2_BUCKET_NAME;
-const PUBLIC_URL_BASE = process.env.R2_PUBLIC_URL; // e.g. https://pub-xxxx.r2.dev
+function getClient() {
+  if (cachedClient) return cachedClient;
+
+  cachedClient = new S3Client({
+    region: "auto",
+    endpoint: process.env.R2_ENDPOINT,
+    credentials: {
+      accessKeyId: process.env.R2_ACCESS_KEY_ID,
+      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+    },
+  });
+
+  return cachedClient;
+}
 
 /**
  * Uploads a PNG buffer to R2 and returns its public URL.
@@ -19,9 +24,14 @@ const PUBLIC_URL_BASE = process.env.R2_PUBLIC_URL; // e.g. https://pub-xxxx.r2.d
  * attach a .catch() to log failures, since nothing else will.
  */
 export async function uploadNftToR2(buffer, filename) {
+  const BUCKET_NAME = process.env.R2_BUCKET_NAME;
+  const PUBLIC_URL_BASE = process.env.R2_PUBLIC_URL; // e.g. https://pub-xxxx.r2.dev
+
   if (!BUCKET_NAME || !PUBLIC_URL_BASE) {
     throw new Error("R2 env vars not configured (R2_BUCKET_NAME / R2_PUBLIC_URL)");
   }
+
+  const r2 = getClient();
 
   await r2.send(
     new PutObjectCommand({
