@@ -32,97 +32,97 @@ export function useNamespace() {
     }
   }, []);
 
-const buyNamespace = useCallback(async (projectName, signer, lifetime) => {
-  setLoading(true);
-  setError(null);
+  const buyNamespace = useCallback(async (projectName, signer, lifetime) => {
+    setLoading(true);
+    setError(null);
 
-  try {
-    const registrar = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, signer);
-    const price = await getPrice(lifetime);
+    try {
+      const registrar = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, signer);
+      const price = await getPrice(lifetime);
 
-    const tx = await registrar.buyProject(projectName, lifetime, {
-      value: price,
-      gasLimit: 500000,
-    });
+      const tx = await registrar.buyProject(projectName, lifetime, {
+        value: price,
+        gasLimit: 500000,
+      });
 
-    const receipt = await tx.wait();
-    if (!receipt) throw new Error("Namespace creation failed");
+      const receipt = await tx.wait();
+      if (!receipt) throw new Error("Namespace creation failed");
 
-    let node = null;
-    for (const log of receipt.logs) {
-      try {
-        const parsed = registrar.interface.parseLog(log);
-        if (parsed?.name === "ProjectCreated") {
-          node = parsed.args.projectNode;
-          break;
+      let node = null;
+      for (const log of receipt.logs) {
+        try {
+          const parsed = registrar.interface.parseLog(log);
+          if (parsed?.name === "ProjectCreated") {
+            node = parsed.args.projectNode;
+            break;
+          }
+        } catch {
+          // not this event, skip
         }
-      } catch {
-        // not this event, skip
       }
+
+      return {
+        success: true,
+        txHash: tx.hash,
+        namespace: `${projectName}.etn`,
+        node,
+      };
+    } catch (err) {
+      console.error("Namespace creation failed:", err);
+      setError(err?.reason || err?.message || "Namespace creation failed");
+      throw err;
+    } finally {
+      setLoading(false);
     }
+  }, [getPrice]);
 
-const getProjectPriceFloors = useCallback(async () => {
-  try {
-    const provider = new ethers.JsonRpcProvider(RPC_URL);
-    const registrar = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, provider);
+  const getProjectPriceFloors = useCallback(async () => {
+    try {
+      const provider = new ethers.JsonRpcProvider(RPC_URL);
+      const registrar = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, provider);
 
-    const [yearFloor, lifetimeFloor] = await Promise.all([
-      registrar.fallbackProjectYearPrice(),
-      registrar.fallbackProjectLifetimePrice(),
-    ]);
+      const [yearFloor, lifetimeFloor] = await Promise.all([
+        registrar.fallbackProjectYearPrice(),
+        registrar.fallbackProjectLifetimePrice(),
+      ]);
 
-    return { yearFloor, lifetimeFloor };
-  } catch (err) {
-    console.error("Failed to fetch project price floors:", err);
-    throw err;
-  }
-}, []);
+      return { yearFloor, lifetimeFloor };
+    } catch (err) {
+      console.error("Failed to fetch project price floors:", err);
+      throw err;
+    }
+  }, []);
 
-const setNamespacePricing = useCallback(async (projectName, yearPrice, lifetimePrice, signer) => {
-  setLoading(true);
-  setError(null);
+  const setNamespacePricing = useCallback(async (projectName, yearPrice, lifetimePrice, signer) => {
+    setLoading(true);
+    setError(null);
 
-  try {
-    const registrar = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, signer);
+    try {
+      const registrar = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, signer);
 
-    const tx = await registrar.setNamespacePrice(projectName, yearPrice, lifetimePrice, {
-      gasLimit: 200000,
-    });
+      const tx = await registrar.setNamespacePrice(projectName, yearPrice, lifetimePrice, {
+        gasLimit: 200000,
+      });
 
-    const receipt = await tx.wait();
-    if (!receipt) throw new Error("Setting namespace price failed");
+      const receipt = await tx.wait();
+      if (!receipt) throw new Error("Setting namespace price failed");
 
-    return { success: true, txHash: tx.hash };
-  } catch (err) {
-    console.error("Setting namespace price failed:", err);
-    setError(err?.reason || err?.message || "Setting namespace price failed");
-    throw err;
-  } finally {
-    setLoading(false);
-  }
-}, []);
+      return { success: true, txHash: tx.hash };
+    } catch (err) {
+      console.error("Setting namespace price failed:", err);
+      setError(err?.reason || err?.message || "Setting namespace price failed");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    return {
-      success: true,
-      txHash: tx.hash,
-      namespace: `${projectName}.etn`,
-      node,
-    };
-  } catch (err) {
-    console.error("Namespace creation failed:", err);
-    setError(err?.reason || err?.message || "Namespace creation failed");
-    throw err;
-  } finally {
-    setLoading(false);
-  }
-}, [getPrice]);
-
-return {
-  getPrice,
-  buyNamespace,
-  getProjectPriceFloors,
-  setNamespacePricing,
-  loading,
-  error,
-};
+  return {
+    getPrice,
+    buyNamespace,
+    getProjectPriceFloors,
+    setNamespacePricing,
+    loading,
+    error,
+  };
 }
