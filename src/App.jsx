@@ -35,7 +35,6 @@ function AppContent() {
 
   const wallet = useReownWallet();
   // ...rest of your existing component unchanged
-  const wallet = useReownWallet();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
