@@ -22,7 +22,14 @@ export default function NamespaceFlow({
   const [errorMsg, setErrorMsg] = useState(null);
   const [nftImage, setNftImage] = useState(null);
 
-  const { getPrice, buyNamespace } = useNamespace();
+const { getPrice, buyNamespace, getProjectPriceFloors, setNamespacePricing } = useNamespace();
+
+const [yearFloor, setYearFloor] = useState(null);
+const [lifetimeFloor, setLifetimeFloor] = useState(null);
+const [yearPriceInput, setYearPriceInput] = useState("");
+const [lifetimePriceInput, setLifetimePriceInput] = useState("");
+const [pricingError, setPricingError] = useState(null);
+const [pricingTxLoading, setPricingTxLoading] = useState(false);
 
   // Fetch BOTH prices on mount
   useEffect(() => {
@@ -66,14 +73,26 @@ const handleBuy = async () => {
     const result = await buyNamespace(namespaceInput, signer, lifetime);
 
     setTxHash(result.txHash);
-    setStep("success");
-    onSuccess?.(result);
 
     if (result.node) {
       generateNamespaceNft(`${namespaceInput}.etn`, result.node);
     } else {
       console.warn("No node found in namespace receipt — skipping NFT generation");
     }
+
+    // Load price floors before showing the pricing step
+    try {
+      const { yearFloor: yf, lifetimeFloor: lf } = await getProjectPriceFloors();
+      setYearFloor(yf);
+      setLifetimeFloor(lf);
+      setYearPriceInput(ethers.formatEther(yf));
+      setLifetimePriceInput(ethers.formatEther(lf));
+    } catch (err) {
+      console.error("Failed to load price floors:", err);
+    }
+
+    setStep("setPricing");
+    onSuccess?.(result);
   } catch (err) {
     console.error("Namespace creation error:", err);
     setErrorMsg(err?.reason || err?.message || "Creation failed");
@@ -81,6 +100,37 @@ const handleBuy = async () => {
   } finally {
     setTxLoading(false);
   }
+};
+
+const handleSetPricing = async () => {
+  setPricingError(null);
+
+  const yearWei = ethers.parseEther(yearPriceInput || "0");
+  const lifetimeWei = ethers.parseEther(lifetimePriceInput || "0");
+
+  if (yearFloor !== null && yearWei < yearFloor) {
+    setPricingError(`1-year price must be at least ${ethers.formatEther(yearFloor)} ETN`);
+    return;
+  }
+  if (lifetimeFloor !== null && lifetimeWei < lifetimeFloor) {
+    setPricingError(`Lifetime price must be at least ${ethers.formatEther(lifetimeFloor)} ETN`);
+    return;
+  }
+
+  setPricingTxLoading(true);
+  try {
+    const signer = await wallet.getSigner();
+    await setNamespacePricing(namespaceInput, yearWei, lifetimeWei, signer);
+    setStep("success");
+  } catch (err) {
+    setPricingError(err?.reason || err?.message || "Failed to set pricing");
+  } finally {
+    setPricingTxLoading(false);
+  }
+};
+
+const handleSkipPricing = () => {
+  setStep("success");
 };
 
 const generateNamespaceNft = async (fullName, nodeHex) => {
@@ -333,6 +383,105 @@ const generateNamespaceNft = async (fullName, nodeHex) => {
           </div>
         </>
       )}
+
+{step === "setPricing" && (
+  <div style={{ textAlign: "center", padding: "40px 20px" }}>
+    <h2 style={{
+      fontSize: 24,
+      fontWeight: 900,
+      color: green,
+      marginBottom: 8,
+    }}>
+      Set Your Pricing
+    </h2>
+    <p style={{ fontSize: 13, color: mutedLight, marginBottom: 24, lineHeight: 1.5 }}>
+      Set prices for names registered under <strong>{namespaceInput}.etn</strong>.
+      You'll earn 80% of every registration.
+    </p>
+
+    <div style={{ marginBottom: 16, textAlign: "left" }}>
+      <label style={{ fontSize: 12, color: muted, display: "block", marginBottom: 6 }}>
+        1 Year Price (ETN)
+      </label>
+      <input
+        type="number"
+        value={yearPriceInput}
+        onChange={(e) => setYearPriceInput(e.target.value)}
+        style={{
+          width: "100%",
+          padding: "12px 14px",
+          borderRadius: 10,
+          border: `1px solid ${border}`,
+          background: panel2,
+          color: "#fff",
+          fontSize: 15,
+          fontWeight: 600,
+          boxSizing: "border-box",
+          outline: "none",
+        }}
+      />
+      {yearFloor !== null && (
+        <div style={{ fontSize: 11, color: muted, marginTop: 4 }}>
+          Minimum: {ethers.formatEther(yearFloor)} ETN
+        </div>
+      )}
+    </div>
+
+    <div style={{ marginBottom: 16, textAlign: "left" }}>
+      <label style={{ fontSize: 12, color: muted, display: "block", marginBottom: 6 }}>
+        Lifetime Price (ETN)
+      </label>
+      <input
+        type="number"
+        value={lifetimePriceInput}
+        onChange={(e) => setLifetimePriceInput(e.target.value)}
+        style={{
+          width: "100%",
+          padding: "12px 14px",
+          borderRadius: 10,
+          border: `1px solid ${border}`,
+          background: panel2,
+          color: "#fff",
+          fontSize: 15,
+          fontWeight: 600,
+          boxSizing: "border-box",
+          outline: "none",
+        }}
+      />
+      {lifetimeFloor !== null && (
+        <div style={{ fontSize: 11, color: muted, marginTop: 4 }}>
+          Minimum: {ethers.formatEther(lifetimeFloor)} ETN
+        </div>
+      )}
+    </div>
+
+    {pricingError && (
+      <div style={{ fontSize: 12, color: error, marginBottom: 16 }}>
+        {pricingError}
+      </div>
+    )}
+
+    <div style={{ display: "flex", gap: 12 }}>
+      <NeonButton
+        variant="dark"
+        onClick={handleSkipPricing}
+        disabled={pricingTxLoading}
+        style={{ flex: 1 }}
+      >
+        Skip (use defaults)
+      </NeonButton>
+      <NeonButton
+        variant="green"
+        onClick={handleSetPricing}
+        disabled={pricingTxLoading}
+        loading={pricingTxLoading}
+        style={{ flex: 1 }}
+      >
+        {pricingTxLoading ? "Setting..." : "Set Prices"}
+      </NeonButton>
+    </div>
+  </div>
+)}
 
 {step === "success" && (
   <div style={{ textAlign: "center", padding: "40px 20px" }}>
