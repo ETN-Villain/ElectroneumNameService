@@ -11,6 +11,13 @@ import NeonButton from "./components/NeonButton.jsx";
 
 function AppContent() {
   const SUSPENDED = true; // flip to false to restore access
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   if (SUSPENDED) {
     return (
@@ -18,23 +25,32 @@ function AppContent() {
         minHeight: "100vh",
         background: "#011528",
         display: "flex",
+        flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
-        color: "#fff",
+        padding: "40px 20px",
         fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-        textAlign: "center",
-        padding: 20,
       }}>
-        <div>
-          <h1 style={{ fontSize: 24, marginBottom: 12 }}>Temporarily Unavailable</h1>
-          <p style={{ color: "#999" }}>We'll be back shortly.</p>
+        <Header wallet={null} isMobile={isMobile} hideWallet={true} />
+
+        <div style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
+          color: "#fff",
+        }}>
+          <div>
+            <h1 style={{ fontSize: 24, marginBottom: 12 }}>Temporarily Unavailable</h1>
+            <p style={{ color: "#999" }}>We'll be back shortly.</p>
+          </div>
         </div>
       </div>
     );
   }
 
   const wallet = useReownWallet();
-  // ...rest of your existing component unchanged
+  // ...rest unchanged
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
