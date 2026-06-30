@@ -9,8 +9,20 @@ const REGISTRAR_ABI = [
   "function setNamespacePrice(string calldata project, uint256 yearPrice, uint256 lifetimePrice) external",
   "function fallbackProjectYearPrice() view returns (uint256)",
   "function fallbackProjectLifetimePrice() view returns (uint256)",
+  "function getProjectCreator(string calldata project) view returns (address)",
+  "function namespaceProjectYearPrice(bytes32 projectNode) view returns (uint256)",
+  "function namespaceProjectLifetimePrice(bytes32 projectNode) view returns (uint256)",
+  "function ownerAccruedFees(address owner) view returns (uint256)",
+  "function withdrawNamespaceFees() external",
   "event ProjectCreated(string project, bytes32 indexed projectNode, address indexed creator, bool lifetime, uint256 expiresAt)",
 ];
+
+const ETN_NODE = "0x69a3977d40595dbc343e3fa6ddbd26dbe31cc237836622384941b3c5148974cd";
+
+function getProjectNode(project) {
+  const labelHash = ethers.keccak256(ethers.toUtf8Bytes(project));
+  return ethers.keccak256(ethers.concat([ETN_NODE, labelHash]));
+}
 
 export function useNamespace() {
   const [loading, setLoading] = useState(false);
@@ -117,12 +129,83 @@ export function useNamespace() {
     }
   }, []);
 
-  return {
-    getPrice,
-    buyNamespace,
-    getProjectPriceFloors,
-    setNamespacePricing,
-    loading,
-    error,
-  };
+const getNamespaceOwner = useCallback(async (project) => {
+  try {
+    const provider = new ethers.JsonRpcProvider(RPC_URL);
+    const registrar = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, provider);
+    return await registrar.getProjectCreator(project);
+  } catch (err) {
+    console.error("Failed to fetch namespace owner:", err);
+    throw err;
+  }
+}, []);
+
+const getCurrentNamespacePricing = useCallback(async (project) => {
+  try {
+    const provider = new ethers.JsonRpcProvider(RPC_URL);
+    const registrar = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, provider);
+
+    const projectNode = getProjectNode(project);
+
+    const [customYear, customLifetime, fallbackYear, fallbackLifetime] = await Promise.all([
+      registrar.namespaceProjectYearPrice(projectNode),
+      registrar.namespaceProjectLifetimePrice(projectNode),
+      registrar.fallbackProjectYearPrice(),
+      registrar.fallbackProjectLifetimePrice(),
+    ]);
+
+    return {
+      yearPrice: customYear > 0n ? customYear : fallbackYear,
+      lifetimePrice: customLifetime > 0n ? customLifetime : fallbackLifetime,
+      yearFloor: fallbackYear,
+      lifetimeFloor: fallbackLifetime,
+      isCustom: customYear > 0n || customLifetime > 0n,
+    };
+  } catch (err) {
+    console.error("Failed to fetch current namespace pricing:", err);
+    throw err;
+  }
+}, []);
+
+const getAccruedFees = useCallback(async (address) => {
+  try {
+    const provider = new ethers.JsonRpcProvider(RPC_URL);
+    const registrar = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, provider);
+    return await registrar.ownerAccruedFees(address);
+  } catch (err) {
+    console.error("Failed to fetch accrued fees:", err);
+    throw err;
+  }
+}, []);
+
+const withdrawFees = useCallback(async (signer) => {
+  setLoading(true);
+  setError(null);
+  try {
+    const registrar = new ethers.Contract(REGISTRAR_ADDRESS, REGISTRAR_ABI, signer);
+    const tx = await registrar.withdrawNamespaceFees({ gasLimit: 100000 });
+    const receipt = await tx.wait();
+    if (!receipt) throw new Error("Withdrawal failed");
+    return { success: true, txHash: tx.hash };
+  } catch (err) {
+    console.error("Withdrawal failed:", err);
+    setError(err?.reason || err?.message || "Withdrawal failed");
+    throw err;
+  } finally {
+    setLoading(false);
+  }
+}, []);
+
+return {
+  getPrice,
+  buyNamespace,
+  getProjectPriceFloors,
+  setNamespacePricing,
+  getNamespaceOwner,
+  getCurrentNamespacePricing,
+  getAccruedFees,
+  withdrawFees,
+  loading,
+  error,
+};
 }
