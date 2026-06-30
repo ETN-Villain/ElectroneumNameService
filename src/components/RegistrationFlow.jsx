@@ -28,22 +28,22 @@ const [nftImage, setNftImage] = useState(null);
     : `${nameData.name}.${nameData.project}.etn`;
 
   // Fetch BOTH prices on mount
-  useEffect(() => {
-    (async () => {
-      setPriceLoading(true);
-      try {
-        const pYear = await getPrice(nameData.type, false);
-        const pLifetime = await getPrice(nameData.type, true);
-        setPriceYear(pYear);
-        setPriceLifetime(pLifetime);
-      } catch (err) {
-        console.error("Price fetch failed:", err);
-        setPriceYear(null);
-        setPriceLifetime(null);
-      }
-      setPriceLoading(false);
-    })();
-  }, [nameData.type, getPrice]);
+useEffect(() => {
+  (async () => {
+    setPriceLoading(true);
+    try {
+      const pYear = await getPrice(nameData.type, false, nameData.project);
+      const pLifetime = await getPrice(nameData.type, true, nameData.project);
+      setPriceYear(pYear);
+      setPriceLifetime(pLifetime);
+    } catch (err) {
+      console.error("Price fetch failed:", err);
+      setPriceYear(null);
+      setPriceLifetime(null);
+    }
+    setPriceLoading(false);
+  })();
+}, [nameData.type, nameData.project, getPrice]);
 
 const handleRegister = async () => {
   if (!wallet.isConnected) {
