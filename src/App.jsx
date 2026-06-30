@@ -51,7 +51,6 @@ function AppContent() {
 
   const wallet = useReownWallet();
   // ...rest unchanged
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
