@@ -10,6 +10,31 @@ import Footer from "./components/Footer.jsx";
 import NeonButton from "./components/NeonButton.jsx";
 
 function AppContent() {
+  const SUSPENDED = true; // flip to false to restore access
+
+  if (SUSPENDED) {
+    return (
+      <div style={{
+        minHeight: "100vh",
+        background: "#011528",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#fff",
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        textAlign: "center",
+        padding: 20,
+      }}>
+        <div>
+          <h1 style={{ fontSize: 24, marginBottom: 12 }}>Temporarily Unavailable</h1>
+          <p style={{ color: "#999" }}>We'll be back shortly.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const wallet = useReownWallet();
+  // ...rest of your existing component unchanged
   const wallet = useReownWallet();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
